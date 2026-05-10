@@ -42,6 +42,8 @@ from datetime import datetime
 import tempfile
 import shutil
 
+_WIN_USER = next((n for n in ("ryudo", "USER") if Path(f"/mnt/c/Users/{n}").exists()), "ryudo")
+
 def resolve_path(path_str: str) -> Path:
     """Resolve Windows-style paths to WSL mount paths when running on Linux."""
     if len(path_str) >= 3 and path_str[1:3] == ":\\":
@@ -51,8 +53,8 @@ def resolve_path(path_str: str) -> Path:
     return Path(path_str.replace("\\", "/"))
 
 # osm 모델 로드
-osm_path = resolve_path(r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\KETI_jb_baseline.osm")
-out_dir = resolve_path(r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm")
+osm_path = resolve_path(rf"C:\Users\{_WIN_USER}\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\KETI_jb_baseline.osm")
+out_dir = resolve_path(rf"C:\Users\{_WIN_USER}\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm")
 out_dir.mkdir(parents=True, exist_ok=True)
 
 if not osm_path.exists():

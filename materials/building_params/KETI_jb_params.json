@@ -1,7 +1,7 @@
 {
   "metadata": {
     "building_name": "KETI_jb",
-    "source_osm": "/mnt/c/Users/ryudo/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/osm/baseline_osm.osm",
+    "source_osm": "/mnt/c/Users/USER/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/osm/baseline_osm.osm",
     "extracted_at": "2026-05-10T14:46:15",
     "openstudio_ver": "3.11.0",
     "n_zones": 12,

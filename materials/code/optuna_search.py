@@ -109,20 +109,29 @@ from score import (
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[1]   # materials/
 
+def _detect_win_user() -> str:
+    """두 대의 PC에서 Windows 사용자 폴더를 자동 감지 (ryudo → USER 순)."""
+    for name in ("ryudo", "USER"):
+        if Path(f"/mnt/c/Users/{name}").exists():
+            return name
+    return "ryudo"
+
+_WIN_USER = _detect_win_user()
+
 DEFAULT_BASELINE_OSM = Path(
-    r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm\baseline_osm_20260503_2213.osm"
+    f"/mnt/c/Users/{_WIN_USER}/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/osm/baseline_osm_20260503_2213.osm"
 )
 # Note: openstudio Python이 E: 경로 OSM을 못 읽는 환경 이슈 → baseline은 C:에서 로드.
 # trial 출력은 여전히 E:\...\materials\optuna\trials\ 시도 (write가 작동하면 그대로,
 # 안 되면 trials_root를 C: 비-OneDrive 경로로 전환 필요).
 DEFAULT_BASELINE_PARAMS = PROJECT_ROOT / "building_params" / "KETI_jb_params.json"
 DEFAULT_EPW = Path(
-    r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\KOR_CB_Jeonju.471460_TMYx.2011-2025.epw"
+    f"/mnt/c/Users/{_WIN_USER}/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/KOR_CB_Jeonju.471460_TMYx.2011-2025.epw"
 )
 
 # 무거운 trial OSM/run/은 openstudio Python이 E:에 write 불가 → C: 비-OneDrive 경로.
 # 가벼운 sqlite DB (Optuna)와 요약 JSON은 Python이 직접 쓰므로 E: 가능 (논문 repo 안).
-DEFAULT_TRIALS_ROOT    = Path(r"C:\Users\ryudo\optuna_trials")
+DEFAULT_TRIALS_ROOT    = Path(f"/mnt/c/Users/{_WIN_USER}/optuna_trials")
 DEFAULT_STUDIES_ROOT   = PROJECT_ROOT / "optuna" / "studies"
 DEFAULT_SUMMARIES_ROOT = PROJECT_ROOT / "optuna" / "summaries"
 

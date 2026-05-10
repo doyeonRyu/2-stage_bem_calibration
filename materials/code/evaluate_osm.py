@@ -50,6 +50,9 @@ DEFAULT_EPW = PROJECT_ROOT / "raw" / "KOR_CB_Jeonju.471460_TMYx.2011-2025.epw"
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "materials" / "evaluation_runs"
 
 
+_WIN_USER = next((n for n in ("ryudo", "USER") if Path(f"/mnt/c/Users/{n}").exists()), "ryudo")
+
+
 def resolve_path(path_str: str) -> Path:
     """Convert Windows paths to WSL paths and normalize separators."""
     if len(path_str) >= 3 and path_str[1:3] == ":\\":
@@ -60,7 +63,7 @@ def resolve_path(path_str: str) -> Path:
 
 
 DEFAULT_OSM_DIR = resolve_path(
-    r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm"
+    rf"C:\Users\{_WIN_USER}\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm"
 )
 
 

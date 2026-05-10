@@ -38,6 +38,9 @@ from pathlib import Path
 from typing import Any
 
 
+_WIN_USER = next((n for n in ("ryudo", "USER") if Path(f"/mnt/c/Users/{n}").exists()), "ryudo")
+
+
 def resolve_path(path_str: str) -> Path:
     if len(path_str) >= 3 and path_str[1:3] == ":\\":
         drive = path_str[0].lower()
@@ -47,7 +50,7 @@ def resolve_path(path_str: str) -> Path:
 
 
 DEFAULT_OSM_DIR = resolve_path(
-    r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm"
+    rf"C:\Users\{_WIN_USER}\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm"
 )
 
 

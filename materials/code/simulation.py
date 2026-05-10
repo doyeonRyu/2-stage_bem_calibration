@@ -55,6 +55,9 @@ def _resolve_path(path_str: str) -> Path:
     return Path(path_str.replace("\\", "/"))
 
 
+_WIN_USER = next((n for n in ("ryudo", "USER") if Path(f"/mnt/c/Users/{n}").exists()), "ryudo")
+
+
 def _to_openstudio_path(path_like: Path | str) -> str:
     """Convert /mnt/<drive>/... paths back to Windows form for openstudio.exe."""
     p = Path(path_like).resolve()
@@ -69,10 +72,10 @@ def _to_openstudio_path(path_like: Path | str) -> str:
 # ---------------------------------------------------------------------------
 # Defaults (Windows 환경 기준)
 # ---------------------------------------------------------------------------
-DEFAULT_OUTPUT_ROOT = _resolve_path(r"C:\Users\ryudo\optuna_trials")
+DEFAULT_OUTPUT_ROOT = _resolve_path(rf"C:\Users\{_WIN_USER}\optuna_trials")
 # Note: openstudio Python이 E:에 write 못함 → trial 출력은 C: 비-OneDrive 경로.
 DEFAULT_EPW = _resolve_path(
-    r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\KOR_CB_Jeonju.471460_TMYx.2011-2025.epw"
+    rf"C:\Users\{_WIN_USER}\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\KOR_CB_Jeonju.471460_TMYx.2011-2025.epw"
 )
 DEFAULT_OPENSTUDIO_BIN = "openstudio"  # PATH 우선, 없으면 _resolve_openstudio_cli()가 탐지
 

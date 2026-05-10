@@ -34,6 +34,8 @@ python materials/code/_test_extract.py
 from pathlib import Path
 import json
 
+_WIN_USER = next((n for n in ("ryudo", "USER") if Path(f"/mnt/c/Users/{n}").exists()), "ryudo")
+
 from osm_calibration_params import (
     extract_baseline_params, save_params, load_params, default_output_path,
 )
@@ -42,8 +44,8 @@ from apply_calibrated_vars import apply_optuna_vars, compute_applied_summary, wr
 
 
 BUILDING_NAME = "KETI_jb"
-OSM_IN   = Path(r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm\baseline_osm_20260503_2010.osm")
-OSM_OUT  = Path(r"C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration\materials\optuna\trial_test.osm")
+OSM_IN   = Path(f"/mnt/c/Users/{_WIN_USER}/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/osm/baseline_osm_20260503_2010.osm")
+OSM_OUT  = Path(f"/mnt/c/Users/{_WIN_USER}/OneDrive - gachon.ac.kr/2-stage_osm_calibration/materials/optuna/trial_test.osm")
 JSON_OUT = default_output_path(BUILDING_NAME)   # materials/building_params/KETI_jb_params.json
 
 
