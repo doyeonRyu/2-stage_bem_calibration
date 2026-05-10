@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>2-Stage OSM Calibration — Flowcharts</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+  background: #eef1f5;
+  padding: 32px;
+  color: #1a1a2e;
+}
+h1 { font-size: 1.6rem; margin-bottom: 4px; }
+.subtitle { color: #555; margin-bottom: 32px; font-size: 0.95rem; }
+h2 {
+  font-size: 1.15rem;
+  border-left: 5px solid #4a90d9;
+  padding-left: 12px;
+  margin: 40px 0 8px;
+  color: #16213e;
+}
+.caption {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 12px;
+  padding-left: 17px;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  overflow-x: auto;
+}
+.mermaid { min-width: 600px; }
+</style>
+</head>
+<body>
+
+<h1>2-Stage OSM Calibration Framework</h1>
+<p class="subtitle">Flowcharts — drafts/3_methodology.md 기반</p>
+
+<!-- ============================================================
+     FIG 1 · OVERALL FRAMEWORK
+     ============================================================ -->
+<h2>Fig 1. Framework Overview (Step 0 → 1 → 2 → 3)</h2>
+<p class="caption">4단계 전체 흐름과 단계 간 입출력</p>
+<div class="card">
+<div class="mermaid">
+flowchart TD
+    classDef stepBox  fill:#1a73e8,color:#fff,stroke:#0d47a1,rx:6
+    classDef outBox   fill:#1e8e3e,color:#fff,stroke:#137333
+    classDef decBox   fill:#f9a825,color:#000,stroke:#f57f17
+    classDef roundBox fill:#6a1b9a,color:#fff,stroke:#4a148c
+
+    %% ── STEP 0 ──────────────────────────────────────────────
+    subgraph S0["STEP 0 — Pre-calibration Baseline & Variable Selection"]
+        direction TB
+        S0a["Revit → gbXML → SketchUp → OpenStudio"]
+        S0b["Baseline OSM 구축"]
+        S0c["선행 GA·최적화 보정 연구 조사\n빈도 + 물리 정합성 기준으로 변수 채택"]
+        S0d["Flat 변수 List\n변수명 · 단위 · literature range · 출처"]:::outBox
+        S0a --> S0b
+        S0c --> S0d
+    end
+
+    %% ── STEP 1 ──────────────────────────────────────────────
+    subgraph S1["STEP 1 — Optuna Optimization  (Stage 1: Search Arm)"]
+        direction TB
+        S1r0["Round 0\nSA / Correlation Screening\nLHS + Spearman or Morris  ← 1회만"]
+        S1act["Active 변수 확정\n비중요 변수 → Baseline 값으로 Freeze"]
+        S1opt["Round 1+  Optuna TPE\n비-freeze 전 변수 동시 최적화\nn_trial = 10"]
+        S1dec{J_curr < J_best?}:::decBox
+        S1upd["모델 업데이트\nPer-variable Freeze 판정 θ_freeze=5%\nSearch Space 축소  α_new = ρ·α_old  ρ=0.7"]
+        S1deg["best-so-far 유지\nFreeze 갱신 건너뜀\nstagnant += 1"]
+        S1stop{종료 조건?}:::decBox
+        S1out["Stage 1 Output\n보정 Baseline OSM · 변수별 최종값\nFreeze 목록 · 잔차 패턴 · J 기여도"]:::outBox
+        S1r0 --> S1act --> S1opt --> S1dec
+        S1dec -- Yes --> S1upd --> S1stop
+        S1dec -- No  --> S1deg --> S1stop
+        S1stop -- "J수렴 2라운드\n모든변수 Freeze\nR_max=7 도달" --> S1out
+        S1stop -- Continue --> S1opt
+    end
+
+    %% ── STEP 2 ──────────────────────────────────────────────
+    subgraph S2["STEP 2 — Specialist Multi-agent Refinement  (Stage 2: Reasoning Arm)"]
+        direction TB
+        S2d["① Diagnostic Agent\n전력·가스 잔차 통합 해석\n→ 시그니처 + Variable candidate list"]
+        S2o1["② Orchestrator Phase 1\nCandidate list → Subset 분할\nSpecialist 인스턴스 호출·할당"]
+        S2sp["③ Specialist Agents  병렬\n각 Subset 내 후보안 생성\n변수 ID · 신규값 · 물리 사유"]
+        S2re["④ Reality Agent\nHard physics + Soft plausibility\nPass / Hold / Reject"]
+        S2o2["⑤ Orchestrator Phase 2\n채택 · Hybrid · 기각 결정\nFreeze 갱신"]
+        S2stop{Stage 2 종료?}:::decBox
+        S2out["정제된 보정 OSM"]:::outBox
+        S2d --> S2o1 --> S2sp --> S2re --> S2o2 --> S2stop
+        S2stop -- "J수렴 · Freeze · Hard cap" --> S2out
+        S2stop -- "Next Round" --> S2d
+    end
+
+    %% ── STEP 3 ──────────────────────────────────────────────
+    subgraph S3["STEP 3 — Validation  (두 채의 실측 건물)"]
+        direction LR
+        S3a["Building A\n정확도 · ablation"]
+        S3b["Building B\n전이 가능성"]
+        S3c["라우팅 해석 가능성\n변수 기여도 분석"]
+        S3a & S3b --> S3c
+    end
+
+    %% ── 단계 간 연결 ────────────────────────────────────────
+    S0b -->|"Baseline OSM"| S1
+    S0d -->|"변수 List"| S1
+    S1out -->|"보정 OSM + 잔차 + Freeze 목록"| S2
+    S2out -->|"최종 보정 OSM"| S3
+</div>
+</div>
+
+
+<!-- ============================================================
+     FIG 2 · STAGE 2 MULTI-AGENT ROUND PROTOCOL
+     ============================================================ -->
+<h2>Fig 2. Stage 2 — 5-step Multi-agent Round Protocol (Primary Novelty)</h2>
+<p class="caption">한 라운드 내 에이전트 흐름·입출력·제약, 라운드 반복 구조</p>
+<div class="card">
+<div class="mermaid">
+flowchart TD
+    classDef agent    fill:#5e35b1,color:#fff,stroke:#3949ab
+    classDef io       fill:#1e8e3e,color:#fff,stroke:#137333
+    classDef decide   fill:#f57c00,color:#fff,stroke:#e65100
+    classDef constraint fill:#c62828,color:#fff,stroke:#b71c1c
+
+    START(["Stage 1 Output 수신\n보정 Baseline OSM · 잔차 패턴\nFreeze 목록 · 변수별 J 기여도"]):::io
+
+    D["① DIAGNOSTIC AGENT\n─────────────────────────\n입력  :  월별 전력·가스 잔차 + J 기여도\n출력  :  전력 잔차 시그니처\n          가스 잔차 시그니처\n          교차 시그니처 전력+가스 동시\n          Variable candidate list\n제약  :  변수 값 수정 불가"]:::agent
+
+    O1["② ORCHESTRATOR Phase 1\n─────────────────────────\n입력  :  Diagnostic 시그니처 + candidate list\n출력  :  Variable subset 분할\n          Specialist 인스턴스 호출·할당\n참고  :  초기 routing prior\n          고정 if-then 규칙 아님\n제약  :  변수 값 수정 불가"]:::agent
+
+    SP["③ SPECIALIST AGENTS  ⟵ 병렬 실행\n─────────────────────────\n입력  :  할당된 Variable subset\n출력  :  후보안 1개\n          변수 ID · 신규 값 · 물리 메커니즘 사유\n제약  :  할당 외 변수 수정 불가 schema validated\n          Stage 1+2 누적 Freeze 변수 수정 불가"]:::agent
+
+    RE["④ REALITY AGENT\n─────────────────────────\n입력  :  각 Specialist 후보안\nHard layer  :  ASHRAE 90.1/G14/62.1\n              국토교통부 에절기준\n              위반 시 자동 Reject\nSoft layer  :  LLM 기반 결합 모순 검토\n              예 외피 우수 + 침기율 높음\n출력  :  Pass · Hold · Reject"]:::agent
+
+    O2["⑤ ORCHESTRATOR Phase 2\n─────────────────────────\n입력  :  Specialist 후보안 + Reality 판정\n채택  :  단일 specialist 우세\nHybrid  :  비충돌·상보적 후보안 병합\n기각  :  Reality reject 또는 J 개선 미미\nFreeze  :  per-variable 변동 θ_freeze 기준\n제약  :  변수 값 직접 수정 불가"]:::agent
+
+    STOP{"Stage 2 종료 조건"}:::decide
+
+    END(["Stage 2 Output\n정제된 보정 OSM\n채택된 변수값 · Freeze 목록 · Audit log"]):::io
+
+    START --> D --> O1 --> SP --> RE --> O2 --> STOP
+    STOP -- "Next Round" --> D
+    STOP -- "J 수렴 2라운드\n전변수 Freeze\nHard cap 도달" --> END
+
+    note1["Audit log\n모든 단계 출력을\nStep 0 변수 identifier 어휘로 기록\n→ Structural Reproducibility 보장"]:::constraint
+    O2 --- note1
+</div>
+</div>
+
+
+<!-- ============================================================
+     FIG 3 · STAGE 1 INTER-ROUND PROTOCOL
+     ============================================================ -->
+<h2>Fig 3. Stage 1 — Inter-round Orchestration Protocol (결정론적 자동화)</h2>
+<p class="caption">Round 0 SA screening → Round 1+ Optuna 반복 · 변수 Freeze · Search Space 축소 · 종료 조건</p>
+<div class="card">
+<div class="mermaid">
+flowchart TD
+    classDef io     fill:#1e8e3e,color:#fff,stroke:#137333
+    classDef proc   fill:#1565c0,color:#fff,stroke:#0d47a1
+    classDef decide fill:#f57c00,color:#fff,stroke:#e65100
+    classDef freeze fill:#6a1b9a,color:#fff,stroke:#4a148c
+    classDef note2  fill:#c62828,color:#fff,stroke:#b71c1c,font-size:12px
+
+    IN(["Step 0 Output\nBaseline OSM + Flat 변수 List"]):::io
+
+    R0["Round 0  ← 단 1회\nSA / Correlation Screening\nLatin Hypercube Sampling\n+ Spearman rank correlation 또는 Morris"]:::proc
+
+    FREEZE0["비중요 변수 → Baseline 값으로 Freeze\nActive 변수 집합 확정"]:::freeze
+
+    INIT["초기화\nalpha_per_var  per active var\nJ_best = J baseline\nround = 1   stagnant = 0"]:::proc
+
+    SPACE["Search Space 구성\n비-freeze 변수  :  current_value ± alpha\n\nEnvelope Hybrid Clamp  적용 변수\n  wall_u_value   roof_u_value\n  window_u_value   window_shgc\n  floor_u_value   oa_or_fan_multiplier\n  → sampler 단계에서 literature range 강제"]:::proc
+
+    OPT["Optuna TPE\n비-freeze 전 변수 동시 최적화\nn_trial = 10  trials"]:::proc
+
+    DEC1{J_curr &lt; J_best?}:::decide
+
+    UPDATE["모델 업데이트\nPer-variable Freeze 판정\n  |v_curr - v_prev| / |v_prev| &lt; θ_freeze 5%\n  2라운드 연속 → Freeze\n\ndelta = J_best - J_curr / J_best\nJ_best = J_curr"]:::proc
+
+    STAG_DEC{delta &lt; θ_J = 1%?}:::decide
+    STAG_UP["stagnant += 1"]:::proc
+    STAG_NO["stagnant = 0"]:::proc
+
+    DEGRADED["best-so-far 유지\nFreeze 갱신 건너뜀\nstagnant += 1"]:::proc
+
+    ALPHA["Alpha 경계 도달 변수 처리\n일반 변수  :  alpha × 1/ρ  1회 확장\n             재도달 시 → Freeze\nEnvelope hybrid clamp 변수  :\n  literature 경계 도달 시 즉시 Freeze"]:::freeze
+
+    SHRINK["Search Space 축소\nα_new = ρ · α_old\nρ = 0.7"]:::proc
+
+    C1{"stagnant ≥ 2?\n수렴 종료"}:::decide
+    C2{"모든 변수 Freeze?\nFreeze 종료"}:::decide
+    C3{"round ≥ R_max = 7?\nHard cap"}:::decide
+
+    NEXT["round += 1"]:::proc
+
+    OUT(["Stage 1 Output\n보정 Baseline OSM\n변수별 최종값\nFreeze 목록  SA freeze + 변동수렴 freeze\n잔차 패턴\n변수별 J 기여도"]):::io
+
+    IN --> R0 --> FREEZE0 --> INIT --> SPACE --> OPT --> DEC1
+    DEC1 -- Yes --> UPDATE --> STAG_DEC
+    STAG_DEC -- Yes --> STAG_UP --> ALPHA
+    STAG_DEC -- No  --> STAG_NO --> ALPHA
+    DEC1 -- No  --> DEGRADED --> ALPHA
+    ALPHA --> SHRINK --> C1
+    C1 -- Yes --> OUT
+    C1 -- No  --> C2
+    C2 -- Yes --> OUT
+    C2 -- No  --> C3
+    C3 -- Yes --> OUT
+    C3 -- No  --> NEXT --> SPACE
+</div>
+</div>
+
+<br><br>
+<p style="color:#999;font-size:0.8rem;text-align:right;">
+  생성 기준: drafts/3_methodology.md &nbsp;|&nbsp; 렌더링: Mermaid 10
+</p>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis', useMaxWidth: false } });
+</script>
+</body>
+</html>

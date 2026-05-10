@@ -1,0 +1,37 @@
+﻿1차 채택 후보,,,,,,,,,,,,,,
+변수 (정규화 명),단위,Pachano'21,Kounni'23,Guo'21,Baba'22,Liang'25,Jiang'24,Ramos'20,Lyu'21,Guerrero'25,Wang'24,Yan'20,Chong'21 (review),합계
+Infiltration rate (ACH or 1/h or leakage area),"ACH, 1/h, cm²",,✓,✓,✓,✓,△ (outdoor air flow),✓,,,,,○,6
+Wall U-value / 외벽 conductivity,W/m²K,,,,✓,✓,△ (conductivity),,,,,,○,4–5
+Roof U-value / 지붕 conductivity,W/m²K,,,,✓,✓,△ (conductivity),,,,,,○,4
+Window U-value / glass conductivity,W/m²K,,,,✓,✓,△ (conductivity),,,,,,○,4
+Window SHGC,—,,,,✓,,✓,,,,,,○,3
+Lighting power density (LPD),W/m²,,,△ (intensity),✓,✓,✓,,,,,,○,4–5
+Equipment power density (EPD),W/m²,,,△,✓,✓,✓,,,,,,○,4–5
+Occupancy density (people),persons or m²/person,,,△,✓ (count),✓ (W/m²),✓,,,,△,,○,4–5
+Heating setpoint,°C,,,✓,,✓,✓ (occ/unocc),,,,△,△ (unocc reset),○,5–6
+Cooling setpoint,°C,,,✓,,,✓ (occ/unocc),,,,△,,○,3–4
+Setpoint schedule (occ vs unocc),°C × time,,,△,,△,✓,,,,✓,△,○,4–5
+Hourly lighting / equipment / occupancy schedule,hourly fraction,,,✓ (×72),,,✓ (×22),,✓,,✓,,○,4
+HVAC operation schedule / availability / setback,time / shift / mode,,,,,△ (setpoint schedule),"△ (weekday/weekend schedule, occ/unocc control)",,✓,✓,✓,✓,△,5–6
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+2차 채택 후보,,,,,,,,,,,,,,
+변수 (정규화 명),단위,Pachano'21,Kounni'23,Guo'21,Baba'22,Liang'25,Jiang'24,Ramos'20,Lyu'21,Guerrero'25,Wang'24,Yan'20,Chong'21 (review),합계
+Floor U-value,W/m²K,,,,,✓,,,,,,,○,2
+Outdoor air flow (occ/unocc),1/h or m³/s,✓ (Min OA flow),,,,,✓ (×2),,,,,✓,○,3
+Thermal mass / capacitance / internal mass,"kJ/m²K, multiplier",,,,✓ (×2),,,✓ (×2),,,,,△,3–4
+DHW peak flow / hot water usage,m³/s,"✓ (recovery time, flow rate)",,,,,✓,,,,,,○ (residential),2
+"HVAC component efficiency (COP, fan)",W/W,"✓ (COP, biquadratic)",,,,,,,,,,,○,1–2
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+Optuna 변수,변수 설정에 포함,,,,,,,,,,,,,
+fab_equip_multiplier,o,,,,,,,,,,,,,
+support_equip_multiplier,o,,,,,,,,,,,,,
+lighting_multiplier,o,,,,,,,,,,,,,
+occupancy_schedule_multiplier,o,,,,,,,,,,,,,
+hvac_availability_shift,o,HVAC schedule,,,,,,,,,,,,
+heating_setpoint_offset,o,,,,,,,,,,,,,
+cooling_setpoint_offset,o,,,,,,,,,,,,,
+oa_or_fan_multiplier,△ (2차),,,,,,,,,,,,,
+shw_use_multiplier,△ (2차),DHW peak flow,,,,,,,,,,,,
+infiltration_multiplier,o,,,,,,,,,,,,,

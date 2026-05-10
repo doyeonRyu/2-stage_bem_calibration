@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Optuna Phase 1-1 Report</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --paper: #fffdf8;
+      --ink: #1f1a17;
+      --muted: #6b6259;
+      --accent: #8c3b2a;
+      --line: #d8cec0;
+      --good: #2d6a4f;
+      --warn: #a05a00;
+      --mono: "IBM Plex Mono", "Consolas", monospace;
+      --serif: "Georgia", "Times New Roman", serif;
+      --sans: "Segoe UI", "Helvetica Neue", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #efe7da 0%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+    .hero {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 28px 28px 22px;
+      box-shadow: 0 18px 40px rgba(63, 40, 24, 0.08);
+    }
+    h1, h2, h3 {
+      margin: 0 0 10px;
+      font-family: var(--serif);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.35rem; margin-top: 28px; }
+    h3 { font-size: 1.02rem; margin-top: 18px; }
+    p, li { color: var(--ink); }
+    .muted { color: var(--muted); }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      margin-top: 18px;
+    }
+    .kpi {
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 0.86rem;
+      margin-right: 8px;
+      background: #fcf7ef;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.94rem;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    code {
+      font-family: var(--mono);
+      font-size: 0.92em;
+      background: #f3ece2;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    pre {
+      overflow-x: auto;
+      background: #201b18;
+      color: #f5efe6;
+      padding: 16px;
+      border-radius: 12px;
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .up { color: var(--good); font-weight: 700; }
+    .warn { color: var(--warn); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Optuna Phase 1-1 Report</h1>
+      <p class="muted">
+        Phase 1-0 결과를 바탕으로, 동일한 active 7개 변수를 유지한 채 search space를 확장하여
+        새 Optuna run을 시작하기 위한 보고서다. 이 HTML은 이후 Phase 1-1 round가 진행될수록
+        같은 파일을 업데이트하는 기준 문서로 사용한다.
+      </p>
+      <div class="meta">
+        <div>
+          <div class="muted">Reference Run</div>
+          <div><code>KETI_jb_phase1_20260510_1524</code></div>
+        </div>
+        <div>
+          <div class="muted">Baseline J</div>
+          <div class="kpi">22.0</div>
+        </div>
+        <div>
+          <div class="muted">Phase 1-0 Best J</div>
+          <div class="kpi">18.6336</div>
+        </div>
+        <div>
+          <div class="muted">Next Run Label</div>
+          <div><code>Phase 1-1</code></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-0 Summary</h2>
+      <p>
+        <span class="badge">stop_reason: convergence</span>
+        <span class="badge">active vars: 7</span>
+        <span class="badge">frozen vars: 0</span>
+        <span class="badge">J history: 18.6336 → 18.6336 → 18.6336</span>
+      </p>
+      <p class="muted">
+        Round 1 trial 2에서 최적값이 나왔고, 이후 round 2~3에서는 개선이 없어 수렴 종료되었다.
+        여러 active 변수값이 기존 search space 상한에 근접하거나 도달해 있어, Phase 1-1에서는
+        우선 변수 수는 유지하고 범위만 확장한다.
+      </p>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2>Phase 1-0 Best Variables</h2>
+        <table>
+          <thead>
+            <tr><th>Variable</th><th>Baseline</th><th>Best</th><th>Phase 1-0 Range</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>equipment_multiplier</code></td><td>1.0</td><td>1.4274</td><td>0.7 ~ 1.5</td></tr>
+            <tr><td><code>lighting_multiplier</code></td><td>1.0</td><td>0.8641</td><td>0.5 ~ 1.5</td></tr>
+            <tr><td><code>occupancy_density_multiplier</code></td><td>1.0</td><td>1.4856</td><td>0.5 ~ 1.5</td></tr>
+            <tr><td><code>hvac_availability_shift</code></td><td>0</td><td>0</td><td>-2 ~ 2</td></tr>
+            <tr><td><code>heating_setpoint_offset</code></td><td>0.0</td><td>1.9972</td><td>-2.0 ~ 2.0</td></tr>
+            <tr><td><code>cooling_setpoint_offset</code></td><td>0.0</td><td>1.9983</td><td>-2.0 ~ 2.0</td></tr>
+            <tr><td><code>infiltration_multiplier</code></td><td>1.0</td><td>1.1916</td><td>0.5 ~ 2.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>Interpretation</h2>
+        <ul>
+          <li><span class="warn">경계 근접</span>: <code>heating_setpoint_offset</code>, <code>cooling_setpoint_offset</code>, <code>occupancy_density_multiplier</code></li>
+          <li><span class="warn">상한 근접</span>: <code>equipment_multiplier</code></li>
+          <li><span class="up">유지</span>: <code>lighting_multiplier</code>, <code>hvac_availability_shift</code>, <code>infiltration_multiplier</code>는 우선 기존 범위 유지</li>
+          <li>따라서 다음 실행은 active 변수 확대보다 <strong>search space 소폭 확장</strong>이 우선이다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Round 1 Result Detail</h2>
+      <p class="muted">Phase 1-0 round 1에서 best trial은 <code>trial_002</code>였고, 이후 round 2 warm start의 기준점이 되었다.</p>
+      <table>
+        <thead>
+          <tr><th>Trial</th><th>J</th><th>Key note</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>trial_000</code></td><td>23.8346</td><td>setpoint 양수, 장비/조명/점유 밀도 낮음</td></tr>
+          <tr><td><code>trial_001</code></td><td>23.1181</td><td>난방 음수, 침기 높음</td></tr>
+          <tr><td><code>trial_002</code></td><td><strong>18.6336</strong></td><td>best trial, 점유밀도·장비·setpoint가 상한 근접</td></tr>
+          <tr><td><code>trial_003</code></td><td>20.3243</td><td>중간 수준</td></tr>
+          <tr><td><code>trial_004</code></td><td>23.9646</td><td>성능 저조</td></tr>
+          <tr><td><code>trial_005</code></td><td>23.3071</td><td>성능 저조</td></tr>
+          <tr><td><code>trial_006</code></td><td>22.9168</td><td>성능 저조</td></tr>
+          <tr><td><code>trial_007</code></td><td>23.3864</td><td>성능 저조</td></tr>
+          <tr><td><code>trial_008</code></td><td>23.1281</td><td>성능 저조</td></tr>
+          <tr><td><code>trial_009</code></td><td>20.0481</td><td>차선권</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Round 2 Search Space in Phase 1-0</h2>
+      <p class="muted">
+        기존 Phase 1-0 내부 round 2는 자동 축소 로직 때문에 이미 best 주변으로 search space가 좁아졌다.
+        그러나 best 값이 여러 변수의 literature 상한 근처에 있었기 때문에 이 축소는 추가 개선에 불리하게 작용했을 가능성이 높다.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Variable</th><th>Round 2 Space</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>equipment_multiplier</code></td><td>1.1474 ~ 1.5</td></tr>
+          <tr><td><code>lighting_multiplier</code></td><td>0.5141 ~ 1.2141</td></tr>
+          <tr><td><code>occupancy_density_multiplier</code></td><td>1.1356 ~ 1.5</td></tr>
+          <tr><td><code>hvac_availability_shift</code></td><td>-1.4 ~ 1.4</td></tr>
+          <tr><td><code>heating_setpoint_offset</code></td><td>0.5972 ~ 2.0</td></tr>
+          <tr><td><code>cooling_setpoint_offset</code></td><td>0.5983 ~ 2.0</td></tr>
+          <tr><td><code>infiltration_multiplier</code></td><td>0.6666 ~ 1.7166</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-1 Search Space Update</h2>
+      <p class="muted">
+        active 변수는 그대로 7개를 유지한다. 경계 근접 변수만 소폭 확장하고, 나머지는 기존 범위를 유지한다.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Variable</th><th>Phase 1-0 Range</th><th>Phase 1-1 Range</th><th>Change</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>equipment_multiplier</code></td><td>0.7 ~ 1.5</td><td>0.7 ~ 1.7</td><td class="up">high +0.2</td></tr>
+          <tr><td><code>lighting_multiplier</code></td><td>0.5 ~ 1.5</td><td>0.5 ~ 1.5</td><td>no change</td></tr>
+          <tr><td><code>occupancy_density_multiplier</code></td><td>0.5 ~ 1.5</td><td>0.5 ~ 1.7</td><td class="up">high +0.2</td></tr>
+          <tr><td><code>hvac_availability_shift</code></td><td>-2 ~ 2</td><td>-2 ~ 2</td><td>no change</td></tr>
+          <tr><td><code>heating_setpoint_offset</code></td><td>-2.0 ~ 2.0</td><td>-2.0 ~ 3.0</td><td class="up">high +1.0</td></tr>
+          <tr><td><code>cooling_setpoint_offset</code></td><td>-2.0 ~ 2.0</td><td>-2.0 ~ 3.0</td><td class="up">high +1.0</td></tr>
+          <tr><td><code>infiltration_multiplier</code></td><td>0.5 ~ 2.0</td><td>0.5 ~ 2.0</td><td>no change</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-1 Start State</h2>
+      <ul>
+        <li>Run label: <code>Phase 1-1</code></li>
+        <li>Study name recommendation: <code>KETI_jb_phase1_1</code></li>
+        <li>Active variables: 동일 7개 유지</li>
+        <li>Baseline best reference: <code>J = 18.6336</code></li>
+        <li>Primary hypothesis: 기존 7개 변수만으로도 추가 개선 여지가 있으나, 상한 경계 때문에 탐색이 조기 정체되었다.</li>
+      </ul>
+      <pre>python materials/code/optuna_search.py \
+  --study-name KETI_jb_phase1_1 \
+  --baseline-osm "C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\osm\baseline_osm.osm" \
+  --baseline-params "/mnt/e/AiCE2/2026/01_BIM-UBEM-LLM/2-stage_osm_calibration/materials/building_params/KETI_jb_params.json" \
+  --epw "C:\Users\ryudo\OneDrive - gachon.ac.kr\2-stage_osm_calibration-osm\KOR_CB_Jeonju.471460_TMYx.2011-2025.epw"</pre>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-1 Result Summary</h2>
+      <p>
+        <span class="badge">run: KETI_jb_phase1_1_20260510_1833</span>
+        <span class="badge">stop_reason: convergence</span>
+        <span class="badge">best J: 18.2826</span>
+        <span class="badge">duration: 14894.6s</span>
+      </p>
+      <p class="muted">
+        Phase 1-1은 Phase 1-0의 best J 18.6336에서 18.2826으로 추가 개선했다. 개선 폭은 크지 않지만,
+        search space 확장이 유효했음을 보여준다. 다만 전기 성능은 이미 양호한 반면, 가스 사용량은 여전히 크게
+        과소추정하고 있어 다음 단계는 gas-focused variable expansion이 필요하다.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Phase 1-0 Best</th><th>Phase 1-1 Best</th><th>Comment</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>best_J</code></td><td>18.6336</td><td><strong>18.2826</strong></td><td class="up">improved by 0.3510</td></tr>
+          <tr><td><code>frozen_vars</code></td><td>0</td><td>3</td><td>equipment, hvac availability, cooling offset</td></tr>
+          <tr><td><code>J_history</code></td><td>18.6336 → 18.6336 → 18.6336</td><td>18.8419 → 18.7098 → 18.4026 → 18.3837 → 18.2826</td><td>slow but monotonic improvement</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2>Phase 1-1 Best Variables</h2>
+        <table>
+          <thead>
+            <tr><th>Variable</th><th>Baseline</th><th>Phase 1-1 Best</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>equipment_multiplier</code></td><td>1.0</td><td>1.4135</td><td>frozen</td></tr>
+            <tr><td><code>lighting_multiplier</code></td><td>1.0</td><td>1.0947</td><td>active</td></tr>
+            <tr><td><code>occupancy_density_multiplier</code></td><td>1.0</td><td>1.2470</td><td>active</td></tr>
+            <tr><td><code>hvac_availability_shift</code></td><td>0</td><td>0</td><td>frozen</td></tr>
+            <tr><td><code>heating_setpoint_offset</code></td><td>0.0</td><td>2.9935</td><td>active, upper-bound adjacent</td></tr>
+            <tr><td><code>cooling_setpoint_offset</code></td><td>0.0</td><td>2.9986</td><td>frozen, upper-bound adjacent</td></tr>
+            <tr><td><code>infiltration_multiplier</code></td><td>1.0</td><td>1.5528</td><td>active</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>Evaluation Snapshot</h2>
+        <table>
+          <thead>
+            <tr><th>Metric</th><th>Value</th><th>Assessment</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>CVRMSE_elec</code></td><td>5.7538</td><td class="up">pass</td></tr>
+            <tr><td><code>NMBE_elec</code></td><td>0.1096</td><td class="up">pass</td></tr>
+            <tr><td><code>CVRMSE_gas</code></td><td>88.5003</td><td class="warn">fail</td></tr>
+            <tr><td><code>NMBE_gas</code></td><td>59.8854</td><td class="warn">fail</td></tr>
+            <tr><td><code>annual_error_gas_pct</code></td><td>-59.8854</td><td class="warn">simulated gas is far below measured gas</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">
+          전기 사용량은 이미 양호하게 맞지만, 난방/가스 계열은 여전히 크게 부족하다. 따라서 다음 단계는
+          전기용 schedule보다 gas-demand를 직접 설명할 수 있는 변수 추가가 우선이다.
+        </p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-2 Plan</h2>
+      <p class="muted">
+        Phase 1-2는 <strong>baseline OSM에서 새 run</strong>으로 시작한다. Phase 1-1 best OSM을 이어받지 않고,
+        baseline은 그대로 두되 active 변수만 7개에서 10개로 늘린다. search space는 기존 active 7개에 대해
+        Phase 1-1과 동일하게 유지한다.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Variable</th><th>Role</th><th>Phase 1-2 Status</th><th>Reason</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>equipment_multiplier</code></td><td>internal loads</td><td>keep active</td><td>Phase 1-1 best contributor, still relevant</td></tr>
+          <tr><td><code>lighting_multiplier</code></td><td>internal loads</td><td>keep active</td><td>electric refinement continuity</td></tr>
+          <tr><td><code>occupancy_density_multiplier</code></td><td>internal loads</td><td>keep active</td><td>density lever retained</td></tr>
+          <tr><td><code>hvac_availability_shift</code></td><td>schedule</td><td>keep active</td><td>existing Stage 1 schedule lever</td></tr>
+          <tr><td><code>heating_setpoint_offset</code></td><td>thermostat</td><td>keep active</td><td>gas-related lever retained</td></tr>
+          <tr><td><code>cooling_setpoint_offset</code></td><td>thermostat</td><td>keep active</td><td>paired thermostat control</td></tr>
+          <tr><td><code>infiltration_multiplier</code></td><td>air exchange</td><td>keep active</td><td>gas-demand lever retained</td></tr>
+          <tr><td><code>setback_delta_offset</code></td><td>setpoint schedule</td><td class="up">new active</td><td>occupied vs unoccupied heating/cooling gap control</td></tr>
+          <tr><td><code>oa_flow_multiplier</code></td><td>outdoor air flow</td><td class="up">new active</td><td>ventilation load lever for gas underestimation</td></tr>
+          <tr><td><code>occupancy_schedule_multiplier</code></td><td>occupancy schedule</td><td class="up">new active</td><td>operation pattern refinement without opening all schedules at once</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-2 Start Note</h2>
+      <ul>
+        <li>Start point: <code>baseline_osm</code> 그대로 사용</li>
+        <li>New active count: <code>10</code></li>
+        <li>Keep search space for existing 7 active vars identical to Phase 1-1</li>
+        <li>New focus: reduce gas underestimation while preserving already-good electricity fit</li>
+        <li>Primary risk: variable identifiability gets weaker, so only 3 new variables are added instead of opening every schedule/envelope lever</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
