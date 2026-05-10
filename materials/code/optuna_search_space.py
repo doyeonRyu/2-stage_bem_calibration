@@ -145,13 +145,13 @@ OPTUNA_SEARCH_SPACE: dict[str, SearchSpaceEntry] = {
         "citation":    [],  # TODO: Kounni'23, Guo'21, Baba'22, Liang'25
     },
     "wall_u_multiplier": {
-        "low": 0.7, "high": 1.3, "type": "float", "enabled": False,
+        "low": 0.7, "high": 1.3, "type": "float", "enabled": True,
         "description": "외벽 U-value 배율 (insulation conductivity 조정 방식)",
         "applies_to":  "candidates.wall_u_multiplier.targets[*].baseline_value",
         "citation":    [],  # TODO: Baba'22, Liang'25, Jiang'24
     },
     "roof_u_multiplier": {
-        "low": 0.7, "high": 1.3, "type": "float", "enabled": False,
+        "low": 0.7, "high": 1.3, "type": "float", "enabled": True,
         "description": "지붕 U-value 배율",
         "applies_to":  "candidates.roof_u_multiplier.targets[*].baseline_value",
         "citation":    [],  # TODO: Baba'22, Liang'25

@@ -378,6 +378,105 @@
         <li>Primary risk: variable identifiability gets weaker, so only 3 new variables are added instead of opening every schedule/envelope lever</li>
       </ul>
     </section>
+
+    <section class="card">
+      <h2>Phase 1-2 Result Summary</h2>
+      <p>
+        <span class="badge">stop_reason: convergence</span>
+        <span class="badge">best J: 14.4866</span>
+        <span class="badge">active vars: 10</span>
+        <span class="badge">frozen vars: 0</span>
+      </p>
+      <p class="muted">
+        Phase 1-2는 baseline OSM에서 새로 시작했으며, 3개 변수
+        <code>setback_delta_offset</code>, <code>oa_flow_multiplier</code>,
+        <code>occupancy_schedule_multiplier</code>를 추가 활성화한 뒤
+        가장 큰 개선을 얻었다. Phase 1-1 best 18.2826에서 14.4866으로 큰 폭의 하락이 발생해,
+        Step 1 search에서 의미 있는 구조적 진전이 확인되었다.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Phase 1-1 Best</th><th>Phase 1-2 Best</th><th>Comment</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>best_J</code></td><td>18.2826</td><td><strong>14.4866</strong></td><td class="up">improved by 3.7960</td></tr>
+          <tr><td><code>electricity fit</code></td><td>good</td><td>good</td><td>electric performance preserved</td></tr>
+          <tr><td><code>gas fit</code></td><td>poor</td><td>still poor, but improved</td><td>gas underestimation reduced substantially</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2>Phase 1-2 Best Variables</h2>
+        <table>
+          <thead>
+            <tr><th>Variable</th><th>Baseline</th><th>Phase 1-2 Best</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>equipment_multiplier</code></td><td>1.0</td><td>1.4450</td></tr>
+            <tr><td><code>lighting_multiplier</code></td><td>1.0</td><td>0.8958</td></tr>
+            <tr><td><code>occupancy_density_multiplier</code></td><td>1.0</td><td>1.6695</td></tr>
+            <tr><td><code>occupancy_schedule_multiplier</code></td><td>1.0</td><td>1.4416</td></tr>
+            <tr><td><code>hvac_availability_shift</code></td><td>0</td><td>-1</td></tr>
+            <tr><td><code>heating_setpoint_offset</code></td><td>0.0</td><td>1.0863</td></tr>
+            <tr><td><code>cooling_setpoint_offset</code></td><td>0.0</td><td>1.3821</td></tr>
+            <tr><td><code>setback_delta_offset</code></td><td>0.0</td><td>0.1803</td></tr>
+            <tr><td><code>infiltration_multiplier</code></td><td>1.0</td><td>1.3677</td></tr>
+            <tr><td><code>oa_flow_multiplier</code></td><td>1.0</td><td>1.2221</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>Evaluation Snapshot</h2>
+        <table>
+          <thead>
+            <tr><th>Metric</th><th>Value</th><th>Assessment</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>CVRMSE_elec</code></td><td>6.1240</td><td class="up">pass</td></tr>
+            <tr><td><code>NMBE_elec</code></td><td>0.2919</td><td class="up">pass</td></tr>
+            <tr><td><code>CVRMSE_gas</code></td><td>70.6639</td><td class="warn">fail</td></tr>
+            <tr><td><code>NMBE_gas</code></td><td>46.5452</td><td class="warn">fail</td></tr>
+            <tr><td><code>annual_error_gas_pct</code></td><td>-46.5452</td><td class="warn">simulated gas still underestimates measured gas</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">
+          전기 사용량은 이미 충분히 맞았고, Phase 1-2에서 가스 오차도 분명히 줄었다. 다만 겨울철 가스
+          사용량 과소추정이 여전히 크므로, 남은 문제는 단순한 search보다는 난방/운영/외피 해석이 필요한
+          residual structure로 보는 편이 타당하다.
+        </p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Phase 1-2 Monthly Interpretation</h2>
+      <ul>
+        <li>전기 residual은 이미 전반적으로 작으며, 일부 겨울·초여름 편차만 남아 있다.</li>
+        <li>가스 residual은 1, 2, 3, 11, 12월에서 여전히 크게 양수다. 즉 측정값 대비 시뮬레이션 난방 가스가 부족하다.</li>
+        <li>중간기와 일부 월은 가스 residual이 많이 개선되었지만, winter heating demand는 여전히 구조적으로 낮게 모델링된다.</li>
+        <li>따라서 다음 단계는 추가 Optuna search보다 Step 2 specialist diagnosis가 더 적절하다.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Decision After Phase 1-2</h2>
+      <p class="muted">
+        현재 Step 1은 충분히 좋은 해를 찾았고, 특히 전기 성능은 이미 만족스럽다. 남은 오차는 겨울철 가스
+        과소추정에 집중되어 있으며, 이는 단순한 변수 추가보다 도메인 해석이 필요한 문제에 가깝다.
+        따라서 다음 단계는 <strong>Step 2 specialist multi-agent refinement</strong>로 전환하는 것이 적절하다.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Next Step</th><th>Recommendation</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Phase 1-3</code></td><td>not preferred now</td><td>more variables may hurt identifiability before diagnosis</td></tr>
+          <tr><td><code>Step 2</code></td><td class="up">recommended</td><td>winter gas residual now dominates and needs structured reasoning</td></tr>
+        </tbody>
+      </table>
+    </section>
   </div>
 </body>
 </html>
