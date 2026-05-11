@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>Step 2 — LLM Multi-Agent Calibration Overview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --bg:#fbfbfa;
+    --panel:#ffffff;
+    --ink:#1c1d22;
+    --muted:#6b6f78;
+    --line:#e6e7ea;
+    --accent:#3457a6;
+    --accent-soft:#eef2fb;
+    --diag:#2c7a7b;
+    --diag-soft:#e6f4f4;
+    --spec:#7a4a17;
+    --spec-soft:#fbf1e3;
+    --orch:#3457a6;
+    --orch-soft:#eef2fb;
+    --real:#7a2c52;
+    --real-soft:#f8e9f0;
+    --good:#1f8a4c;
+    --warn:#c45a14;
+    --bad:#b3261e;
+    --code:#f3f4f6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","Noto Sans KR",sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 28px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:28px}
+  header.top h1{margin:0 0 6px;font-size:28px;letter-spacing:-0.01em}
+  header.top .meta{color:var(--muted);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}
+  header.top .meta b{color:var(--ink);font-weight:600}
+  h2{font-size:20px;margin:36px 0 12px;letter-spacing:-0.005em;border-left:3px solid var(--accent);padding-left:10px}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--ink)}
+  h4{font-size:13px;margin:14px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+  p{margin:6px 0 10px}
+  code,kbd{font-family:"SFMono-Regular",ui-monospace,Consolas,monospace;font-size:12.5px;background:var(--code);padding:1px 5px;border-radius:3px}
+  pre{background:var(--code);padding:12px 14px;border-radius:6px;font-size:12.5px;overflow-x:auto;border:1px solid var(--line)}
+  ul,ol{margin:6px 0 10px;padding-left:22px}
+  li{margin:3px 0}
+  table{border-collapse:collapse;width:100%;margin:8px 0 14px;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f7;font-weight:600}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+  .grid{display:grid;gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.02em}
+  .pill-diag{background:var(--diag-soft);color:var(--diag)}
+  .pill-spec{background:var(--spec-soft);color:var(--spec)}
+  .pill-orch{background:var(--orch-soft);color:var(--orch)}
+  .pill-real{background:var(--real-soft);color:var(--real)}
+  .pill-out{background:#eee;color:#444}
+
+  .agent{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+  .agent .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .agent .head .name{font-size:14.5px;font-weight:600}
+  .agent .role{color:var(--muted);font-size:12.5px;margin-bottom:8px}
+  .agent .scope{font-size:12.5px}
+  .agent .scope b{color:var(--ink)}
+
+  .flow{counter-reset:step;display:grid;gap:10px}
+  .step{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start}
+  .step .num{counter-increment:step;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+  .step .num::before{content:counter(step)}
+  .step .body{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .step .body .title{font-weight:600;font-size:14px;margin-bottom:4px}
+  .step .body .desc{font-size:13px;color:#3a3d44}
+
+  .kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .kpi .item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .kpi .item .label{font-size:12px;color:var(--muted);margin-bottom:2px}
+  .kpi .item .value{font-size:18px;font-weight:700}
+  .kpi .item .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+  .placeholder{background:repeating-linear-gradient(135deg,#fafbff,#fafbff 8px,#f3f5fb 8px,#f3f5fb 16px);border:1px dashed #c9cfdb;border-radius:8px;padding:18px 20px;color:#7a8094;font-size:13px}
+  .placeholder b{color:#3457a6}
+
+  details{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin:8px 0}
+  details>summary{cursor:pointer;font-weight:600;font-size:14px;padding:4px 0}
+  details[open]{padding-bottom:14px}
+
+  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}
+  .footer{margin-top:48px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:12px}
+  .anchor{color:var(--accent);text-decoration:none}
+  .tag-good{color:var(--good);font-weight:600}
+  .tag-warn{color:var(--warn);font-weight:600}
+  .tag-bad{color:var(--bad);font-weight:600}
+
+  .note{background:#fff8e6;border:1px solid #f1d98a;border-radius:6px;padding:10px 12px;font-size:13px}
+  .note.info{background:#eef4ff;border-color:#bfd1f5}
+  .note.warn{background:#fdecec;border-color:#f3b6b3}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Step 2 — LLM Multi-Agent Calibration</h1>
+  <div class="meta">
+    <span><b>대상</b> KETI 캠퍼스(가칭), Step 1 산출물 입력</span>
+    <span><b>문서</b> plans/step2_overview.html</span>
+    <span><b>대응 본문</b> drafts/3_method_v2.md §Step 2</span>
+    <span><b>최종 갱신</b> 2026-05-11</span>
+  </div>
+</header>
+
+<!-- =========================================================
+     0. Stage 1 산출물 (입력 컨텍스트)
+========================================================= -->
+<h2>0. 입력 컨텍스트 — Stage 1 산출물</h2>
+<p>Step 2는 Stage 1(Optuna phase 1)의 결과를 입력으로 받는다. Stage 1의 active/freeze/미활성 status는 <b>prior 정보</b>로만 작동하며 hard constraint로 전이되지 않는다.</p>
+
+<div class="kpi">
+  <div class="item"><div class="label">Stage 1 best J</div><div class="value">18.6336</div><div class="sub">baseline 22.0 → −15.30%</div></div>
+  <div class="item"><div class="label">전력 절대 연오차</div><div class="value">27.49%</div><div class="sub">ASHRAE G14 임계 외</div></div>
+  <div class="item"><div class="label">가스 절대 연오차</div><div class="value">48.83%</div><div class="sub">전력 대비 ≈1.78×</div></div>
+  <div class="item"><div class="label">stop reason</div><div class="value" style="font-size:14px">convergence</div><div class="sub">trial 2 best, 이후 평탄화</div></div>
+</div>
+
+<div class="card">
+  <h3>Stage 1 best parameters (7 active)</h3>
+  <table>
+    <thead><tr><th>변수</th><th>최종값</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><code>equipment_multiplier</code></td><td>1.4274</td><td>1.5 boundary 근접</td></tr>
+      <tr><td><code>lighting_multiplier</code></td><td>0.8641</td><td>중간 영역</td></tr>
+      <tr><td><code>occupancy_density_multiplier</code></td><td>1.4856</td><td>1.5 boundary 근접</td></tr>
+      <tr><td><code>hvac_availability_shift</code></td><td>0</td><td>정수, 미이동</td></tr>
+      <tr><td><code>heating_setpoint_offset</code></td><td>1.9972</td><td><span class="tag-warn">+2.0 boundary hit</span></td></tr>
+      <tr><td><code>cooling_setpoint_offset</code></td><td>1.9983</td><td><span class="tag-warn">+2.0 boundary hit</span></td></tr>
+      <tr><td><code>infiltration_multiplier</code></td><td>1.1916</td><td>중간 영역</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px"><b>Stage 1 freeze 변수:</b> 없음 (모두 active 상태로 종료)</p>
+</div>
+
+<!-- =========================================================
+     1. Step 2 개요
+========================================================= -->
+<h2>1. Step 2 개요</h2>
+<div class="card">
+  <p>Step 2는 LLM 기반 multi-agent reasoning을 통한 <b>구조화된 미세 보정</b> 단계이다. Stage 1에서 탐색 공간이 축소되고 잔차가 구조적으로 정리된 시점부터 시작하며, 자유 생성 AI 후처리가 아니라 사전 정의된 제약·어휘·채택 규칙 안에서 운영된다.</p>
+  <h4>운영 원칙</h4>
+  <ul>
+    <li><b>변수 어휘 고정:</b> Step 0에서 정의된 <b>22개 변수 pool 전체</b>가 Stage 2 작업 대상. 신규 변수 정의·생성 불가</li>
+    <li><b>Stage 1 status는 prior:</b> active/freeze/미활성 모두 후보, 단 잔차 시그니처가 지목해야 freeze 변수가 재활성</li>
+    <li><b>diagnostic-driven routing:</b> diagnostic agent가 잔차 시그니처를 해석 → orchestrator가 라운드별 specialist subset을 동적 할당</li>
+    <li><b>값 수정 권한 분리:</b> diagnostic·orchestrator·reality는 변수 값 수정 불가 / specialist만 후보안 제출</li>
+    <li><b>감사 로그:</b> 전 단계가 변수 identifier 어휘로 로깅되어 structural reproducibility 보장</li>
+  </ul>
+</div>
+
+<!-- =========================================================
+     2. Agent 토폴로지
+========================================================= -->
+<h2>2. Agent 토폴로지</h2>
+<div class="legend">
+  <span><span class="pill pill-diag">DIAGNOSTIC</span> 잔차 진단</span>
+  <span><span class="pill pill-orch">ORCHESTRATOR</span> 라우팅·채택</span>
+  <span><span class="pill pill-spec">SPECIALIST</span> 후보안 제출</span>
+  <span><span class="pill pill-real">REALITY</span> 사후 검토</span>
+</div>
+
+<h3>2.1 Diagnostic agents (2)</h3>
+<div class="grid grid-2">
+  <div class="agent">
+    <div class="head"><span class="name">electricity-diagnostic-agent</span><span class="pill pill-diag">DIAG</span></div>
+    <div class="role">전력 측 residual pattern을 진단하는 critic. 최종 case를 생성하지 않고 specialist 호출 근거를 제공.</div>
+    <div class="scope"><b>입력:</b> 실측 전력, score.json, monthly_comparison.csv, monthly_results.json, specialist 후보안 요약<br><b>출력:</b> 전력 잔차 시그니처 + 정합 variable candidate list</div>
+  </div>
+  <div class="agent">
+    <div class="head"><span class="name">gas-diagnostic-agent</span><span class="pill pill-diag">DIAG</span></div>
+    <div class="role">가스 측 residual pattern을 진단하는 critic. 전력과 동일한 책임 구조.</div>
+    <div class="scope"><b>입력:</b> 실측 가스, score.json, monthly_comparison.csv, monthly_results.json, specialist 후보안 요약<br><b>출력:</b> 가스 잔차 시그니처 + 정합 variable candidate list</div>
+  </div>
+</div>
+<p style="font-size:12.5px;color:var(--muted);margin-top:4px">두 diagnostic의 교차 시그니처(예: 여름 cooling 전력 bias + shoulder 가스 bias)는 orchestrator가 통합 해석한다.</p>
+
+<h3>2.2 Orchestrator agent (Phase 1 / Phase 2 두 시점)</h3>
+<div class="card" style="border-left:3px solid var(--orch)">
+  <div class="head" style="display:flex;justify-content:space-between;align-items:center"><b>orchestrator-agent</b><span class="pill pill-orch">ORCH</span></div>
+  <p style="margin-top:6px">Step 2 전체 흐름을 관리하는 최종 의사결정 agent. 변수 *값* 수정 권한 없음 — routing·할당·채택·freeze만 수행.</p>
+  <div class="grid grid-2" style="margin-top:8px">
+    <div>
+      <h4>Phase 1 — 라운드 시작</h4>
+      <ul>
+        <li>diagnostic의 candidate list로부터 variable subset 분할</li>
+        <li>specialist 인스턴스 호출 + 동적 할당</li>
+        <li>routing prior(물리 직관) 참고하되 컨텍스트 따라 재해석 가능</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Phase 2 — 라운드 종료</h4>
+      <ul>
+        <li>specialist 후보안 + reality 판정 + 전역 J 평가 종합</li>
+        <li>채택 / hybrid / 기각 결정</li>
+        <li>per-variable 변동 <code>&lt; θ_freeze</code> 기준 freeze 갱신</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<h3>2.3 Specialist agents (6) — 카테고리별 후보안 제출</h3>
+<p style="font-size:12.5px;color:var(--muted)">orchestrator가 라운드별 동적으로 호출. 같은 라운드에 여러 인스턴스가 서로 다른 variable subset을 담당하며 병렬 호출. 출력은 <code>(변수 식별자, 신규 값, 물리 사유)</code> tuple list.</p>
+
+<div class="grid grid-3">
+  <div class="agent">
+    <div class="head"><span class="name">envelope-air-exchange-agent</span><span class="pill pill-spec">SPEC</span></div>
+    <div class="role">외피 및 공기교환 카테고리.</div>
+    <div class="scope"><b>담당:</b> infiltration 관련 변수 / 외피 U-value, SHGC, 침기율 등</div>
+  </div>
+  <div class="agent">
+    <div class="head"><span class="name">internal-loads-agent</span><span class="pill pill-spec">SPEC</span></div>
+    <div class="role">내부발열 및 전력 기저부하 카테고리.</div>
+    <div class="scope"><b>담당:</b> lighting / equipment / occupancy density multiplier</div>
+  </div>
+  <div class="agent">
+    <div class="head"><span class="name">schedules-operation-agent</span><span class="pill pill-spec">SPEC</span></div>
+    <div class="role">운영 스케줄 및 availability 패턴 카테고리.</div>
+    <div class="scope"><b>담당:</b> occupancy/lighting/equipment schedule scale·shift, HVAC availability</div>
+  </div>
+  <div class="agent">
+    <div class="head"><span class="name">thermostat-setpoints-agent</span><span class="pill pill-spec">SPEC</span></div>
+    <div class="role">thermostat 및 setpoint 제어 카테고리.</div>
+    <div class="scope"><b>담당:</b> heating/cooling setpoint offset, setback</div>
+  </div>
+  <div class="agent">
+    <div class="head"><span class="name">hvac-plant-efficiency-agent</span><span class="pill pill-spec">SPEC</span></div>
+    <div class="role">HVAC 및 plant efficiency 카테고리.</div>
+    <div class="scope"><b>담당:</b> boiler efficiency, COP, fan/pump 효율</div>
+  </div>
+  <div class="agent">
+    <div class="head"><span class="name">dhw-agent</span><span class="pill pill-spec">SPEC</span></div>
+    <div class="role">급탕 수요 및 DHW 제어 카테고리.</div>
+    <div class="scope"><b>담당:</b> DHW use multiplier, DHW 운영 가정</div>
+  </div>
+</div>
+
+<h3>2.4 Reality agent (1) — 사후 검토</h3>
+<div class="card" style="border-left:3px solid var(--real)">
+  <div class="head" style="display:flex;justify-content:space-between;align-items:center"><b>reality-agent</b><span class="pill pill-real">CRITIC</span></div>
+  <p style="margin-top:6px">specialist 후보안 <b>사후 검토</b>에만 호출됨 (라운드 시작 시점에는 호출되지 않음). pass / hold / reject + 사유 출력. 변수 값 수정 권한 없음.</p>
+  <ul>
+    <li><b>Hard physics 위반</b> (ASHRAE 90.1/G14/62.1, 국토교통부 건축물 에너지절약설계기준 등 외부 표준): 자동 reject</li>
+    <li><b>Soft plausibility</b>: 표준 범위 내 결합 모순(예: 외피 매우 우수 + 침기율 매우 높음) → hold/pass 의견</li>
+  </ul>
+</div>
+
+<!-- =========================================================
+     3. 라운드 흐름
+========================================================= -->
+<h2>3. 라운드 흐름 (한 라운드 sequence)</h2>
+<div class="flow">
+  <div class="step"><div class="num"></div><div class="body"><div class="title">잔차 진단 — diagnostic agents 병렬 호출</div><div class="desc">electricity-diagnostic + gas-diagnostic이 월별 잔차·변수별 J 기여도를 해석해 시그니처 + variable candidate list 생성. 22개 pool 전체에서 도출.</div></div></div>
+  <div class="step"><div class="num"></div><div class="body"><div class="title">라우팅 — orchestrator phase 1</div><div class="desc">candidate list를 specialist 카테고리별 subset으로 분할 → specialist 인스턴스 호출 명령(할당 subset + 라운드 컨텍스트)을 발행.</div></div></div>
+  <div class="step"><div class="num"></div><div class="body"><div class="title">후보안 제출 — specialist 병렬 실행</div><div class="desc">호출된 specialist들이 할당 subset 안에서 <code>(변수 식별자, 신규 값, 물리 사유)</code> tuple list를 반환. 할당 외 변수·freeze 변수 수정 불가 (schema validation).</div></div></div>
+  <div class="step"><div class="num"></div><div class="body"><div class="title">사후 검토 — reality agent</div><div class="desc">각 후보안에 대해 hard physics binary reject + soft plausibility hold/pass 의견을 출력.</div></div></div>
+  <div class="step"><div class="num"></div><div class="body"><div class="title">시뮬레이션·평가</div><div class="desc">후보안 적용 OSM으로 EnergyPlus 실행 → 월별 CVRMSE/NMBE → J 재계산.</div></div></div>
+  <div class="step"><div class="num"></div><div class="body"><div class="title">채택·freeze — orchestrator phase 2</div><div class="desc">단일 우세 / 비충돌 hybrid / 기각 + per-variable 변동 <code>&lt; θ_freeze</code>인 변수 freeze. hold + J 개선 미미는 다음 라운드 재고. 모든 결정은 변수 어휘로 감사 로그.</div></div></div>
+</div>
+
+<!-- =========================================================
+     4. 채택 규칙·제약·종료 조건
+========================================================= -->
+<h2>4. 채택 규칙 · 제약 · 종료 조건</h2>
+<div class="grid grid-2">
+  <div class="card">
+    <h3>4.1 채택 규칙 (orchestrator phase 2)</h3>
+    <ul>
+      <li>단일 specialist 후보안 우세 → 그대로 채택</li>
+      <li>복수 후보안이 비충돌·상보적인 경우에만 hybrid 허용 (서로 다른 subset)</li>
+      <li>reality reject → 자동 기각</li>
+      <li>reality hold + J 개선 미미 → 다음 라운드 재고</li>
+      <li>임의 합성·자유 생성 채택 금지</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>4.2 제약 조건</h3>
+    <ol>
+      <li><b>도메인 제한</b>: subset 외부·22개 어휘 외·Stage 2 freeze 변수 수정 불가</li>
+      <li><b>Hard physics</b>: 외부 표준 위반 자동 reject</li>
+      <li><b>Soft plausibility</b>: 결합 모순 hold/pass 의견</li>
+      <li><b>채택 규칙 제한</b>: 사전 정의된 규칙만 허용</li>
+      <li><b>감사 로그</b>: 전 단계 변수 identifier 어휘 로깅</li>
+    </ol>
+  </div>
+</div>
+
+<div class="card">
+  <h3>4.3 종료 조건</h3>
+  <table>
+    <thead><tr><th>조건</th><th>기준</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>수렴 종료</td><td><code>(J_prev − J_curr) / J_prev &lt; θ_J</code> 2 라운드 연속</td><td>θ_J = 1%</td></tr>
+      <tr><td>Freeze 종료</td><td>22개 pool 누적 freeze 도달</td><td>Stage 2 자체 freeze 기준</td></tr>
+      <tr><td>Hard cap</td><td>Stage 2 라운드 수 상한 도달</td><td>안전장치</td></tr>
+      <tr><td>ASHRAE G14 충족</td><td>monthly CVRMSE ≤ 15% 및 |NMBE| ≤ 5%</td><td>조기 종료</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- =========================================================
+     5. 라우팅 prior
+========================================================= -->
+<h2>5. Initial Routing Prior (orchestrator phase 1)</h2>
+<table>
+  <thead><tr><th>잔차 시그니처</th><th>우선 할당 specialist / 변수</th></tr></thead>
+  <tbody>
+    <tr><td>내부부하·운영 패턴 전력 시그니처</td><td>internal-loads, schedules-operation (LPD, EPD, 점유 density, 운영 schedule)</td></tr>
+    <tr><td>겨울 난방 가스 시그니처</td><td>envelope-air-exchange, thermostat-setpoints, hvac-plant-efficiency (외피 U-value, 침기, 난방 setpoint, HVAC 효율)</td></tr>
+    <tr><td>baseload·shoulder 가스 시그니처</td><td>dhw, schedules-operation, envelope-air-exchange (DHW, 운영 schedule, 외피)</td></tr>
+    <tr><td>전력·가스 교차 시그니처</td><td>schedules-operation, thermostat-setpoints (운영 schedule, HVAC availability, 점유 density)</td></tr>
+    <tr><td>반복 지목 variable subset</td><td>다음 라운드 우선순위 상승</td></tr>
+  </tbody>
+</table>
+
+<!-- =========================================================
+     6. 산출물
+========================================================= -->
+<h2>6. Step 2 산출물</h2>
+<div class="card">
+  <ul>
+    <li>최종 보정 완료된 calibration OSM</li>
+    <li>전기·가스 월별·전체 오차, 평가 지표 비교 (baseline vs. Stage 1 vs. Stage 2 final)</li>
+    <li>Reasoning 분석 결과 (라운드별 진단·라우팅·채택 사유 로그)</li>
+  </ul>
+</div>
+
+<!-- =========================================================
+     7. 진행 결과 — Phase별 채워나갈 영역
+========================================================= -->
+<h2>7. 진행 결과 (Phase별)</h2>
+<p class="note info">아래 섹션은 Step 2 각 phase가 종료될 때마다 결과·해석을 누적해 채워나간다. 각 라운드는 동일한 구조(diagnostic / routing / specialist 후보안 / reality 판정 / orchestrator phase 2 채택 / J 변화)를 따른다.</p>
+
+<details open>
+  <summary>Round 1 — <span class="tag-warn">진행 예정</span></summary>
+  <h4>Diagnostic 결과</h4>
+  <div class="placeholder"><b>TBD</b> · electricity-diagnostic / gas-diagnostic 시그니처, 교차 시그니처, variable candidate list</div>
+  <h4>Orchestrator Phase 1 — 라우팅 결정</h4>
+  <div class="placeholder"><b>TBD</b> · 호출된 specialist 인스턴스 + 할당 subset</div>
+  <h4>Specialist 후보안</h4>
+  <div class="placeholder"><b>TBD</b> · (변수, 신규 값, 물리 사유) tuple list</div>
+  <h4>Reality 판정</h4>
+  <div class="placeholder"><b>TBD</b> · pass / hold / reject + 사유</div>
+  <h4>Orchestrator Phase 2 — 채택</h4>
+  <div class="placeholder"><b>TBD</b> · 채택안, freeze 갱신, hold 목록</div>
+  <h4>평가</h4>
+  <div class="placeholder"><b>TBD</b> · J_prev=18.6336 → J_curr=?, 월별 CVRMSE/NMBE 변화</div>
+</details>
+
+<details>
+  <summary>Round 2 — <span style="color:var(--muted)">미시작</span></summary>
+  <div class="placeholder"><b>TBD</b> · Round 1 동일 템플릿으로 채워짐</div>
+</details>
+
+<details>
+  <summary>Round 3 — <span style="color:var(--muted)">미시작</span></summary>
+  <div class="placeholder"><b>TBD</b></div>
+</details>
+
+<details>
+  <summary>Round 4+ — <span style="color:var(--muted)">미시작</span></summary>
+  <div class="placeholder"><b>TBD</b></div>
+</details>
+
+<details>
+  <summary>최종 결과 (Stage 2 final)</summary>
+  <h4>최종 채택 변수값 (22개 pool)</h4>
+  <div class="placeholder"><b>TBD</b> · 변수별 baseline → Stage 1 → Stage 2 최종 변화</div>
+  <h4>Stage 2 freeze 누적 목록</h4>
+  <div class="placeholder"><b>TBD</b></div>
+  <h4>월별·연간 CVRMSE/NMBE 비교</h4>
+  <div class="placeholder"><b>TBD</b> · baseline vs. Stage 1 vs. Stage 2; ASHRAE G14 임계 충족 여부</div>
+  <h4>Reasoning 요약</h4>
+  <div class="placeholder"><b>TBD</b> · 어떤 잔차 시그니처가 어떤 변수 변경으로 해소되었는지의 서사</div>
+</details>
+
+<!-- =========================================================
+     8. 변경 이력
+========================================================= -->
+<h2>8. 변경 이력</h2>
+<table>
+  <thead><tr><th style="width:120px">날짜</th><th>변경 내용</th></tr></thead>
+  <tbody>
+    <tr><td>2026-05-11</td><td>초안 생성. Stage 1 산출물 요약, agent 토폴로지(10개), 라운드 흐름, 채택·제약·종료 조건, Phase 결과 placeholder 골격.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  대응 본문: <code>drafts/3_method_v2.md</code> §Step 2 (LL.162–276) · agent 정의: <code>.claude/agents/*.md</code>
+</div>
+
+</div>
+</body>
+</html>
