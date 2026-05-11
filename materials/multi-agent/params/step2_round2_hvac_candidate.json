@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "run": "step2_round2_hvac_candidate",
+    "base": "step2_round2_base",
+    "agent": "hvac_plant_efficiency",
+    "created": "2026-05-11",
+    "description": "Round 2 HVAC/Plant Efficiency agent 제안. boiler_efficiency 하향(dhw=0.85 가정), chiller_cop HOLD 해제.",
+    "changed_vars": [
+      "boiler_efficiency_multiplier",
+      "chiller_cop_multiplier",
+      "dhw_use_multiplier"
+    ],
+    "change_rationale": {
+      "boiler_efficiency_multiplier": "0.78 → 0.74: dhw_use 1.25→0.85 하향으로 난방시즌 DHW 기여 -12,485 Nm3 감소. 이를 보완하기 위해 boiler_eff 추가 하향(0.78→0.74). mult=0.74 시 난방+DHW 가스 +4,422 Nm3 증가로 dhw 악화분 일부 상쇄. 탐색 범위 0.70~0.80 내, 물리 제약 baseline×0.74=0.629 < 0.999 PASS.",
+      "chiller_cop_multiplier": "1.0 → 1.10: 봄철(3-6월) 전력 과대추정 -147,469 kWh 부분 교정. COP 상향 시 동일 냉방수요를 더 적은 전력으로 충족. 예상 냉방전력 절감 ~59,000 kWh/년. 가을(9-10월) 과소추정 추가 악화 최소화 위해 1.15 상한 내 보수적 선택(1.10). CVRMSE_elec=6.09% PASS 유지 목표.",
+      "dhw_use_multiplier": "1.25 → 0.85: orchestrator 지시에 따른 재조정(여름 가스 과대추정 교정). HVAC agent 범위 외이나, boiler_eff 착지점 산정의 전제 조건으로 반영."
+    },
+    "expected_effect": {
+      "gas_heating_season": "boiler_eff 0.74 적용 시 난방시즌 +4,422 Nm3 증가 (dhw 악화분 -12,485 중 35% 보완)",
+      "elec_spring": "chiller_cop 1.10 적용 시 봄/여름 냉방전력 약 -59,000 kWh/년 절감 (과대추정 174,016 kWh의 34% 교정)",
+      "cvrmse_elec": "현재 6.09% PASS → 소폭 개선 기대 (1~2% 범위)",
+      "cvrmse_gas": "현재 50.56% FAIL → 개선 미미 (heating demand 과소추정은 envelope/schedule 영역)"
+    },
+    "risks": {
+      "boiler": "boiler_eff 단독으로 가스 잔차 해소 불가 (난방 시즌 목표 달성률 63.9% 수준). 잔여 잔차는 heating demand 과소추정(envelope·schedule·infiltration 영역).",
+      "chiller": "가을(9-10월) 과소추정 +18,707 kWh 소폭 추가 악화 가능성. 11-12월 전력 과소추정 구조(-139,505 kWh) 미해결.",
+      "interaction": "dhw_use 0.85와 boiler_eff 0.74 동시 적용 시 여름 가스 시뮬 소폭 감소(실측 근접) 기대"
+    }
+  },
+  "equipment_multiplier": 1.4449828421840456,
+  "lighting_multiplier": 0.8958476758549521,
+  "occupancy_density_multiplier": 1.6694997374890812,
+  "occupancy_schedule_multiplier": 1.4416039376428627,
+  "lighting_schedule_multiplier": 1.0,
+  "equipment_schedule_multiplier": 1.0,
+  "hvac_availability_shift": -1,
+  "heating_setpoint_offset": 1.0863153419864489,
+  "cooling_setpoint_offset": 1.382149794798482,
+  "setback_delta_offset": 0.18034519920761305,
+  "infiltration_multiplier": 1.42,
+  "wall_u_multiplier": 1.10,
+  "roof_u_multiplier": 1.0,
+  "window_u_multiplier": 1.0,
+  "window_shgc_multiplier": 1.0,
+  "floor_u_multiplier": 1.0,
+  "oa_flow_multiplier": 1.2221234549004705,
+  "fan_power_multiplier": 1.0,
+  "boiler_efficiency_multiplier": 0.74,
+  "chiller_cop_multiplier": 1.10,
+  "dhw_use_multiplier": 0.85,
+  "thermal_mass_multiplier": 1.0
+}

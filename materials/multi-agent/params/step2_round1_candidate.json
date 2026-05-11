@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "run": "step2_round1",
+    "base": "KETI_jb_phase1_2_20260510_2323",
+    "base_J": 14.486625978298086,
+    "created": "2026-05-11",
+    "description": "Step 2 Round 1 채택 후보안 (reality PASS 4개). boiler/infiltration/wall_u/dhw 변경. chiller_cop·window_u·fan_power 보류.",
+    "changed_vars": ["boiler_efficiency_multiplier", "infiltration_multiplier", "wall_u_multiplier", "dhw_use_multiplier"],
+    "held_vars": {
+      "chiller_cop_multiplier": {"proposed": 1.20, "reason": "전력 지표 악화 위험 — 2라운드 재검토"},
+      "window_u_multiplier": {"proposed": 1.08, "reason": "열손실 이중증폭 위험 — wall_u 효과 확인 후"},
+      "fan_power_multiplier": {"proposed": 1.10, "reason": "chiller_cop와 전력 방향 상충"}
+    }
+  },
+  "equipment_multiplier": 1.4449828421840456,
+  "lighting_multiplier": 0.8958476758549521,
+  "occupancy_density_multiplier": 1.6694997374890812,
+  "occupancy_schedule_multiplier": 1.4416039376428627,
+  "lighting_schedule_multiplier": 1.0,
+  "equipment_schedule_multiplier": 1.0,
+  "hvac_availability_shift": -1,
+  "heating_setpoint_offset": 1.0863153419864489,
+  "cooling_setpoint_offset": 1.382149794798482,
+  "setback_delta_offset": 0.18034519920761305,
+  "infiltration_multiplier": 1.42,
+  "wall_u_multiplier": 1.10,
+  "roof_u_multiplier": 1.0,
+  "window_u_multiplier": 1.0,
+  "window_shgc_multiplier": 1.0,
+  "floor_u_multiplier": 1.0,
+  "oa_flow_multiplier": 1.2221234549004705,
+  "fan_power_multiplier": 1.0,
+  "boiler_efficiency_multiplier": 0.78,
+  "chiller_cop_multiplier": 1.0,
+  "dhw_use_multiplier": 1.25,
+  "thermal_mass_multiplier": 1.0
+}

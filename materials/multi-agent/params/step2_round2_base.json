@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "run": "step2_round2",
+    "base": "step2_round1_candidate",
+    "base_J": 8.3485,
+    "created": "2026-05-11",
+    "description": "Round 2 시작 base params. Round 1 채택값 반영. dhw_use 재조정 필수.",
+    "round2_priority": [
+      "dhw_use_multiplier: 1.25 → 0.85~1.05 재탐색 (여름 과대추정 교정)",
+      "가을 9-10월 가스 과대 원인 진단 (heating schedule onset / setpoint)",
+      "전력 봄 과대·겨울 과소 패턴 (chiller_cop / fan_power / schedules 검토)"
+    ],
+    "hold_from_r1": {
+      "chiller_cop_multiplier": {"proposed": 1.20, "condition": "전력 봄 과대 원인 판별 후"},
+      "window_u_multiplier": {"proposed": 1.08, "condition": "겨울 잔차 >10000 잔존 시"},
+      "fan_power_multiplier": {"proposed": 1.10, "condition": "chiller_cop 방향 결정 후"}
+    }
+  },
+  "equipment_multiplier": 1.4449828421840456,
+  "lighting_multiplier": 0.8958476758549521,
+  "occupancy_density_multiplier": 1.6694997374890812,
+  "occupancy_schedule_multiplier": 1.4416039376428627,
+  "lighting_schedule_multiplier": 1.0,
+  "equipment_schedule_multiplier": 1.0,
+  "hvac_availability_shift": -1,
+  "heating_setpoint_offset": 1.0863153419864489,
+  "cooling_setpoint_offset": 1.382149794798482,
+  "setback_delta_offset": 0.18034519920761305,
+  "infiltration_multiplier": 1.42,
+  "wall_u_multiplier": 1.10,
+  "roof_u_multiplier": 1.0,
+  "window_u_multiplier": 1.0,
+  "window_shgc_multiplier": 1.0,
+  "floor_u_multiplier": 1.0,
+  "oa_flow_multiplier": 1.2221234549004705,
+  "fan_power_multiplier": 1.0,
+  "boiler_efficiency_multiplier": 0.78,
+  "chiller_cop_multiplier": 1.0,
+  "dhw_use_multiplier": 1.25,
+  "thermal_mass_multiplier": 1.0
+}

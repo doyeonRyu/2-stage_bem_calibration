@@ -174,12 +174,52 @@
   <div class="agent">
     <div class="head"><span class="name">electricity-diagnostic-agent</span><span class="pill pill-diag">DIAG</span></div>
     <div class="role">전력 측 residual pattern을 진단하는 critic. 최종 case를 생성하지 않고 specialist 호출 근거를 제공.</div>
-    <div class="scope"><b>입력:</b> 실측 전력, score.json, monthly_comparison.csv, monthly_results.json, specialist 후보안 요약<br><b>출력:</b> 전력 잔차 시그니처 + 정합 variable candidate list</div>
+    <div class="scope"><b>입력:</b> Stage 1 best params, 월별 전력 실측/시뮬/잔차, score 요약, 22개 변수 pool + Stage1 status, 건물 특성<br><b>출력:</b> ① 전력 잔차 시그니처 ② variable candidate list ③ 진단 신뢰도</div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="margin-top:8px;font-size:12px;line-height:1.6">
+        <b>입력 컨텍스트</b>
+        <ul>
+          <li>Stage 1 best parameters (10 active + full_final 22개 모두)</li>
+          <li>월별 전력: 실측 / 시뮬레이션 / 잔차(실측−시뮬) 12개월</li>
+          <li>score 요약: CVRMSE_elec, NMBE_elec, 연간 오차율</li>
+          <li>22개 변수 pool + Stage 1 status (active / inactive / frozen)</li>
+          <li>건물 특성: FAB-dominant, space type 목록, HVAC(AHU+보일러+칠러)</li>
+        </ul>
+        <b>출력 형식</b>
+        <ol>
+          <li><b>전력 잔차 시그니처</b>: 계절별 편향 방향·크기, 물리적 원인 해석</li>
+          <li><b>variable candidate list</b>: [{변수 식별자, 선택 근거, 조정 방향(↑/↓), Stage1 status}]</li>
+          <li><b>진단 신뢰도</b>: high/medium/low + 불확실성 메모</li>
+        </ol>
+        <b>제약</b>: 변수 <i>값</i> 수정 불가 · candidate list 생성만 수행 · Step 0 22개 어휘 한정
+      </div>
+    </details>
   </div>
   <div class="agent">
     <div class="head"><span class="name">gas-diagnostic-agent</span><span class="pill pill-diag">DIAG</span></div>
     <div class="role">가스 측 residual pattern을 진단하는 critic. 전력과 동일한 책임 구조.</div>
-    <div class="scope"><b>입력:</b> 실측 가스, score.json, monthly_comparison.csv, monthly_results.json, specialist 후보안 요약<br><b>출력:</b> 가스 잔차 시그니처 + 정합 variable candidate list</div>
+    <div class="scope"><b>입력:</b> Stage 1 best params, 월별 가스 실측/시뮬/잔차, score 요약, 22개 변수 pool + Stage1 status, 건물 특성<br><b>출력:</b> ① 가스 잔차 시그니처 ② variable candidate list (우선순위 포함) ③ 진단 신뢰도</div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="margin-top:8px;font-size:12px;line-height:1.6">
+        <b>입력 컨텍스트</b>
+        <ul>
+          <li>Stage 1 best parameters (10 active + full_final 22개 모두)</li>
+          <li>월별 가스: 실측 / 시뮬레이션 / 잔차(실측−시뮬) 12개월</li>
+          <li>score 요약: CVRMSE_gas, NMBE_gas, 연간 오차율</li>
+          <li>22개 변수 pool + Stage 1 status (active / inactive / frozen)</li>
+          <li>건물 특성: 가스보일러 난방, DHW 구성, space type 목록</li>
+        </ul>
+        <b>출력 형식</b>
+        <ol>
+          <li><b>가스 잔차 시그니처</b>: 계절별 편향 방향·크기, 난방/DHW/envelope 기여 원인 해석</li>
+          <li><b>variable candidate list</b>: [{변수 식별자, 선택 근거, 조정 방향(↑/↓), 우선순위(H/M/L), Stage1 status}]</li>
+          <li><b>진단 신뢰도</b>: high/medium/low + 불확실성 메모</li>
+        </ol>
+        <b>제약</b>: 변수 <i>값</i> 수정 불가 · candidate list 생성만 수행 · Step 0 22개 어휘 한정
+      </div>
+    </details>
   </div>
 </div>
 <p style="font-size:12.5px;color:var(--muted);margin-top:4px">두 diagnostic의 교차 시그니처(예: 여름 cooling 전력 bias + shoulder 가스 bias)는 orchestrator가 통합 해석한다.</p>
@@ -187,7 +227,7 @@
 <h3>2.2 Orchestrator agent (Phase 1 / Phase 2 두 시점)</h3>
 <div class="card" style="border-left:3px solid var(--orch)">
   <div class="head" style="display:flex;justify-content:space-between;align-items:center"><b>orchestrator-agent</b><span class="pill pill-orch">ORCH</span></div>
-  <p style="margin-top:6px">Step 2 전체 흐름을 관리하는 최종 의사결정 agent. 변수 *값* 수정 권한 없음 — routing·할당·채택·freeze만 수행.</p>
+  <p style="margin-top:6px">Step 2 전체 흐름을 관리하는 최종 의사결정 agent. 변수 <i>값</i> 수정 권한 없음 — routing·할당·채택·freeze만 수행.</p>
   <div class="grid grid-2" style="margin-top:8px">
     <div>
       <h4>Phase 1 — 라운드 시작</h4>
@@ -196,6 +236,25 @@
         <li>specialist 인스턴스 호출 + 동적 할당</li>
         <li>routing prior(물리 직관) 참고하되 컨텍스트 따라 재해석 가능</li>
       </ul>
+      <details style="margin-top:8px">
+        <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Phase 1 Brief 템플릿</summary>
+        <div style="font-size:12px;line-height:1.6;margin-top:6px">
+          <b>입력</b>
+          <ul>
+            <li>electricity-diagnostic-agent 출력 (전력 시그니처 + candidate list)</li>
+            <li>gas-diagnostic-agent 출력 (가스 시그니처 + candidate list)</li>
+            <li>교차 시그니처 통합 (두 modality 동시 영향 변수)</li>
+            <li>Routing prior (§5 표)</li>
+            <li>Stage 2 누적 freeze 목록 (Round 1: 없음)</li>
+          </ul>
+          <b>출력</b>
+          <ul>
+            <li>specialist 인스턴스별 variable subset 할당 목록</li>
+            <li>specialist 호출 명령 (subset + 라운드 컨텍스트 + 조정 방향 힌트)</li>
+          </ul>
+          <b>제약</b>: 변수 <i>값</i> 수정 불가 · routing·할당만
+        </div>
+      </details>
     </div>
     <div>
       <h4>Phase 2 — 라운드 종료</h4>
@@ -204,6 +263,24 @@
         <li>채택 / hybrid / 기각 결정</li>
         <li>per-variable 변동 <code>&lt; θ_freeze</code> 기준 freeze 갱신</li>
       </ul>
+      <details style="margin-top:8px">
+        <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Phase 2 Brief 템플릿</summary>
+        <div style="font-size:12px;line-height:1.6;margin-top:6px">
+          <b>입력</b>
+          <ul>
+            <li>각 specialist 후보안: (변수 식별자, 신규 값, 물리 사유)</li>
+            <li>reality-agent 판정: pass / hold / reject + 사유</li>
+            <li>J 재계산 결과 (후보안 적용 EnergyPlus 시뮬)</li>
+          </ul>
+          <b>출력</b>
+          <ul>
+            <li>채택 변수값 (식별자 · 최종 채택값)</li>
+            <li>freeze 갱신 목록 (per-variable 변동 &lt; θ_freeze=5%)</li>
+            <li>hold 처리 목록 (다음 라운드 재고)</li>
+          </ul>
+          <b>채택 규칙</b>: 단일 우세 채택 / 비충돌 hybrid / reality reject → 자동 기각 / hold+J 개선 미미 → 다음 라운드
+        </div>
+      </details>
     </div>
   </div>
 </div>
@@ -215,32 +292,116 @@
   <div class="agent">
     <div class="head"><span class="name">envelope-air-exchange-agent</span><span class="pill pill-spec">SPEC</span></div>
     <div class="role">외피 및 공기교환 카테고리.</div>
-    <div class="scope"><b>담당:</b> infiltration 관련 변수 / 외피 U-value, SHGC, 침기율 등</div>
+    <div class="scope"><b>담당:</b> <code>infiltration_multiplier</code>, <code>wall_u_multiplier</code>, <code>roof_u_multiplier</code>, <code>window_u_multiplier</code>, <code>window_shgc_multiplier</code>, <code>floor_u_multiplier</code></div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="font-size:12px;line-height:1.6;margin-top:6px">
+        <b>입력 (orchestrator로부터)</b>
+        <ul>
+          <li>할당된 variable subset (변수 식별자 + Stage 1 현재값)</li>
+          <li>관련 잔차 시그니처 + 조정 방향 힌트</li>
+          <li>Stage 1 best params 전체 (참고 컨텍스트)</li>
+          <li>변수 물리 범위 및 제약</li>
+        </ul>
+        <b>출력</b>: <code>(변수 식별자, 신규 값, 물리 매커니즘 사유)</code> tuple list<br>
+        <b>제약</b>: 할당 subset 외 변수 수정 불가 · Stage 2 freeze 변수 수정 불가 · schema validation
+      </div>
+    </details>
   </div>
   <div class="agent">
     <div class="head"><span class="name">internal-loads-agent</span><span class="pill pill-spec">SPEC</span></div>
     <div class="role">내부발열 및 전력 기저부하 카테고리.</div>
-    <div class="scope"><b>담당:</b> lighting / equipment / occupancy density multiplier</div>
+    <div class="scope"><b>담당:</b> <code>equipment_multiplier</code>, <code>lighting_multiplier</code>, <code>occupancy_density_multiplier</code></div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="font-size:12px;line-height:1.6;margin-top:6px">
+        <b>입력 (orchestrator로부터)</b>
+        <ul>
+          <li>할당된 variable subset (변수 식별자 + Stage 1 현재값)</li>
+          <li>관련 잔차 시그니처 + 조정 방향 힌트</li>
+          <li>Stage 1 best params 전체 (참고 컨텍스트)</li>
+          <li>변수 물리 범위 및 제약</li>
+        </ul>
+        <b>출력</b>: <code>(변수 식별자, 신규 값, 물리 매커니즘 사유)</code> tuple list<br>
+        <b>제약</b>: 할당 subset 외 변수 수정 불가 · Stage 2 freeze 변수 수정 불가 · schema validation
+      </div>
+    </details>
   </div>
   <div class="agent">
     <div class="head"><span class="name">schedules-operation-agent</span><span class="pill pill-spec">SPEC</span></div>
     <div class="role">운영 스케줄 및 availability 패턴 카테고리.</div>
-    <div class="scope"><b>담당:</b> occupancy/lighting/equipment schedule scale·shift, HVAC availability</div>
+    <div class="scope"><b>담당:</b> <code>occupancy_schedule_multiplier</code>, <code>lighting_schedule_multiplier</code>, <code>equipment_schedule_multiplier</code>, <code>hvac_availability_shift</code></div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="font-size:12px;line-height:1.6;margin-top:6px">
+        <b>입력 (orchestrator로부터)</b>
+        <ul>
+          <li>할당된 variable subset (변수 식별자 + Stage 1 현재값)</li>
+          <li>관련 잔차 시그니처 + 조정 방향 힌트</li>
+          <li>Stage 1 best params 전체 (참고 컨텍스트)</li>
+          <li>변수 물리 범위 및 제약</li>
+        </ul>
+        <b>출력</b>: <code>(변수 식별자, 신규 값, 물리 매커니즘 사유)</code> tuple list<br>
+        <b>제약</b>: 할당 subset 외 변수 수정 불가 · Stage 2 freeze 변수 수정 불가 · schema validation
+      </div>
+    </details>
   </div>
   <div class="agent">
     <div class="head"><span class="name">thermostat-setpoints-agent</span><span class="pill pill-spec">SPEC</span></div>
     <div class="role">thermostat 및 setpoint 제어 카테고리.</div>
-    <div class="scope"><b>담당:</b> heating/cooling setpoint offset, setback</div>
+    <div class="scope"><b>담당:</b> <code>heating_setpoint_offset</code>, <code>cooling_setpoint_offset</code>, <code>setback_delta_offset</code></div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="font-size:12px;line-height:1.6;margin-top:6px">
+        <b>입력 (orchestrator로부터)</b>
+        <ul>
+          <li>할당된 variable subset (변수 식별자 + Stage 1 현재값)</li>
+          <li>관련 잔차 시그니처 + 조정 방향 힌트</li>
+          <li>Stage 1 best params 전체 (참고 컨텍스트)</li>
+          <li>변수 물리 범위 및 제약</li>
+        </ul>
+        <b>출력</b>: <code>(변수 식별자, 신규 값, 물리 매커니즘 사유)</code> tuple list<br>
+        <b>제약</b>: 할당 subset 외 변수 수정 불가 · Stage 2 freeze 변수 수정 불가 · schema validation
+      </div>
+    </details>
   </div>
   <div class="agent">
     <div class="head"><span class="name">hvac-plant-efficiency-agent</span><span class="pill pill-spec">SPEC</span></div>
     <div class="role">HVAC 및 plant efficiency 카테고리.</div>
-    <div class="scope"><b>담당:</b> boiler efficiency, COP, fan/pump 효율</div>
+    <div class="scope"><b>담당:</b> <code>boiler_efficiency_multiplier</code>, <code>chiller_cop_multiplier</code>, <code>fan_power_multiplier</code></div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="font-size:12px;line-height:1.6;margin-top:6px">
+        <b>입력 (orchestrator로부터)</b>
+        <ul>
+          <li>할당된 variable subset (변수 식별자 + Stage 1 현재값)</li>
+          <li>관련 잔차 시그니처 + 조정 방향 힌트</li>
+          <li>Stage 1 best params 전체 (참고 컨텍스트)</li>
+          <li>변수 물리 범위 및 제약</li>
+        </ul>
+        <b>출력</b>: <code>(변수 식별자, 신규 값, 물리 매커니즘 사유)</code> tuple list<br>
+        <b>제약</b>: 할당 subset 외 변수 수정 불가 · Stage 2 freeze 변수 수정 불가 · schema validation
+      </div>
+    </details>
   </div>
   <div class="agent">
     <div class="head"><span class="name">dhw-agent</span><span class="pill pill-spec">SPEC</span></div>
     <div class="role">급탕 수요 및 DHW 제어 카테고리.</div>
-    <div class="scope"><b>담당:</b> DHW use multiplier, DHW 운영 가정</div>
+    <div class="scope"><b>담당:</b> <code>dhw_use_multiplier</code></div>
+    <details style="margin-top:8px">
+      <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+      <div style="font-size:12px;line-height:1.6;margin-top:6px">
+        <b>입력 (orchestrator로부터)</b>
+        <ul>
+          <li>할당된 variable subset (변수 식별자 + Stage 1 현재값)</li>
+          <li>관련 잔차 시그니처 + 조정 방향 힌트</li>
+          <li>Stage 1 best params 전체 (참고 컨텍스트)</li>
+          <li>변수 물리 범위 및 제약</li>
+        </ul>
+        <b>출력</b>: <code>(변수 식별자, 신규 값, 물리 매커니즘 사유)</code> tuple list<br>
+        <b>제약</b>: 할당 subset 외 변수 수정 불가 · Stage 2 freeze 변수 수정 불가 · schema validation
+      </div>
+    </details>
   </div>
 </div>
 
@@ -252,6 +413,25 @@
     <li><b>Hard physics 위반</b> (ASHRAE 90.1/G14/62.1, 국토교통부 건축물 에너지절약설계기준 등 외부 표준): 자동 reject</li>
     <li><b>Soft plausibility</b>: 표준 범위 내 결합 모순(예: 외피 매우 우수 + 침기율 매우 높음) → hold/pass 의견</li>
   </ul>
+  <details style="margin-top:4px">
+    <summary style="font-size:12px;cursor:pointer;color:var(--accent)">▸ Agent Brief 템플릿</summary>
+    <div style="font-size:12px;line-height:1.6;margin-top:6px">
+      <b>입력</b>
+      <ul>
+        <li>각 specialist 후보안: (변수 식별자, 신규 값, 물리 사유) tuple list</li>
+        <li>건물 특성 (space type, HVAC, 운영 패턴)</li>
+        <li>Stage 1 best params 전체 (비교 기준)</li>
+      </ul>
+      <b>출력</b>: 후보안별 <code>pass / hold / reject + 사유</code><br>
+      <b>판정 기준</b>
+      <ul>
+        <li>Hard physics 위반 (ASHRAE 90.1/G14/62.1, 국토부 기준) → 자동 reject</li>
+        <li>Soft plausibility (결합 모순, 예: infiltration ↑ + envelope U ↓ 동시 극단) → hold/pass</li>
+        <li>개별 변수 절대 범위 초과 → reject (예: boiler eff &gt;0.999, setpoint &lt;12°C or &gt;32°C)</li>
+      </ul>
+      <b>제약</b>: 변수 <i>값</i> 수정 불가 · pass/hold/reject 판정만 수행
+    </div>
+  </details>
 </div>
 
 <!-- =========================================================
@@ -341,28 +521,353 @@
 <p class="note info">아래 섹션은 Step 2 각 phase가 종료될 때마다 결과·해석을 누적해 채워나간다. 각 라운드는 동일한 구조(diagnostic / routing / specialist 후보안 / reality 판정 / orchestrator phase 2 채택 / J 변화)를 따른다.</p>
 
 <details open>
-  <summary>Round 1 — <span class="tag-warn">진행 예정</span></summary>
+  <summary>Round 1 — <span class="tag-good">완료 (J=8.35)</span></summary>
   <h4>Diagnostic 결과</h4>
-  <div class="placeholder"><b>TBD</b> · electricity-diagnostic / gas-diagnostic 시그니처, 교차 시그니처, variable candidate list</div>
+
+  <h4 style="color:var(--diag);margin-top:10px">▌ 전력 잔차 시그니처</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>구간</th><th>잔차 합계</th><th>방향</th><th>물리 원인</th></tr></thead>
+      <tbody>
+        <tr><td>겨울(1,2,12)</td><td>+120,964 kWh</td><td style="color:var(--good)">시뮬 과소추정</td><td>FAB 장비 기저부하·팬 동절기 과소. 12월 +84,809 kWh 최대</td></tr>
+        <tr><td>봄(3,4,5)</td><td>−97,684 kWh</td><td style="color:var(--bad)">시뮬 과대추정</td><td>냉방 조기 가동 + 칠러 COP 미보정. 5월 −62,980 kWh 최대</td></tr>
+        <tr><td>여름(6,7,8)</td><td>−75,209 kWh</td><td style="color:var(--bad)">시뮬 과대추정</td><td>칠러 COP inactive(1.0). 동일 냉방부하 대비 전력 과소비</td></tr>
+        <tr><td>가을(9,10,11)</td><td>+74,722 kWh</td><td style="color:var(--good)">시뮬 과소추정</td><td>11월 +55,956. 냉방 종료 후 FAB 장비 부하 과소</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">냉방기(4-9) −158,351 kWh vs. 비냉방기(10-3) +181,144 kWh 상쇄 구조. 연간 NMBE 0.29%는 두 편향이 상쇄된 결과이며 단일 global 파라미터로 해소 불가능.</p>
+  </div>
+
+  <h4 style="color:var(--diag);margin-top:10px">▌ 가스 잔차 시그니처</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>구간</th><th>잔차 합계</th><th>방향</th><th>물리 원인</th></tr></thead>
+      <tbody>
+        <tr><td>동절기(12,1,2,3)</td><td>+60,503 Nm³</td><td style="color:var(--bad)">시뮬 과소추정</td><td>보일러 효율 미보정(inactive). 동절기 시뮬이 실측의 41~57%만 예측. 열손실 경로 복합</td></tr>
+        <tr><td>봄 전환(4,5)</td><td>+11,409 Nm³</td><td style="color:var(--bad)">시뮬 과소추정</td><td>난방 종료 시점 불일치. 시뮬이 난방 조기 종료</td></tr>
+        <tr><td>여름 기저(6,8)</td><td>+1,077 Nm³</td><td style="color:var(--warn)">소폭 과소추정</td><td>DHW 수요 과소. dhw_use_multiplier inactive(1.0)</td></tr>
+        <tr><td>7월 이상치</td><td>+3,468 Nm³</td><td style="color:var(--warn)">이상치</td><td>FAB 집중 가동 특수 운영 가능성</td></tr>
+        <tr><td>가을(9,10)</td><td>−2,014 Nm³</td><td style="color:var(--good)">시뮬 과대추정</td><td>보일러 조기 개시 과잉. heating_setpoint 추가 상향 시 악화 위험</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">신뢰도: Medium-High. 보일러 효율 vs. 열손실 경로 분담 비율은 EnergyPlus Zone/System 열수지 분석 필요.</p>
+  </div>
+
+  <h4 style="color:var(--orch);margin-top:10px">▌ 교차 시그니처 (전력+가스 동시 영향 변수)</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>전력 측 영향</th><th>가스 측 영향</th><th>결합 위험도</th></tr></thead>
+      <tbody>
+        <tr><td><code>heating_setpoint_offset</code></td><td>냉방 과대 악화 가능</td><td>동절기 난방 부족 해소 유리, 가을 과대 악화 위험</td><td class="tag-warn">MEDIUM — 가을 음의 잔차 악화 주의</td></tr>
+        <tr><td><code>occupancy_density_multiplier</code></td><td>냉방기 냉방부하 기여</td><td>내부발열로 난방 수요 상쇄</td><td class="tag-warn">MEDIUM — 하향 시 가스 오차 악화 가능</td></tr>
+        <tr><td><code>oa_flow_multiplier</code></td><td>냉방기 과대 기여</td><td>환기 열손실 → 난방 기여</td><td class="tag-warn">MEDIUM — 방향 결정 전 양측 확인 필요</td></tr>
+        <tr><td><code>hvac_availability_shift</code></td><td>봄 냉방 조기 가동 기여</td><td>가스 난방 종료 시점 영향</td><td class="tag-warn">MEDIUM — 계절 전환 coupling</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 style="color:var(--ink);margin-top:10px">▌ Variable Candidate List (통합)</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>방향</th><th>우선순위</th><th>주요 근거</th><th>Stage1</th></tr></thead>
+      <tbody>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>↓</td><td class="tag-bad">H</td><td>가스 동절기 과소(50%) 구조 원인. inactive 기본값이 핵심 병목</td><td>inactive</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>↑</td><td class="tag-bad">H</td><td>전력 냉방기 과대추정(-158천 kWh). 전력-isolated 레버. 가스 간섭 없음</td><td>inactive</td></tr>
+        <tr><td><code>infiltration_multiplier</code></td><td>↑</td><td class="tag-bad">H</td><td>동절기 열손실. 현재 1.37이나 가스 과소 지속 → 추가 상향 후보</td><td>active</td></tr>
+        <tr><td><code>dhw_use_multiplier</code></td><td>↑</td><td class="tag-warn">M</td><td>여름 기저 가스 과소. 연간 기여 ~18,180 Nm³(잔차의 22.7%)</td><td>inactive</td></tr>
+        <tr><td><code>wall_u_multiplier</code></td><td>↑</td><td class="tag-warn">M</td><td>동절기 열손실. inactive 기본값. Phase1-3에서 1.13 수렴 관찰</td><td>inactive</td></tr>
+        <tr><td><code>window_u_multiplier</code></td><td>↑</td><td class="tag-warn">M</td><td>창호 열손실. 사무실·기숙사 구역 해당. 동절기 잔차 정합</td><td>inactive</td></tr>
+        <tr><td><code>roof_u_multiplier</code></td><td>↑ (검토)</td><td class="tag-warn">M</td><td>Phase1-3에서 0.95 수렴. FAB 대형 지붕 면적 고려</td><td>inactive</td></tr>
+        <tr><td><code>equipment_schedule_multiplier</code></td><td>계절 분리 검토</td><td class="tag-warn">M</td><td>전력 동절기 과소(11-12월). FAB 장비 겨울 가동률 과소 추정</td><td>inactive</td></tr>
+        <tr><td><code>fan_power_multiplier</code></td><td>↑</td><td class="tag-warn">M</td><td>전력 비냉방기 과소. AHU·FFU 팬 동절기 기여</td><td>inactive</td></tr>
+        <tr><td><code>heating_setpoint_offset</code></td><td>↑ (조건부)</td><td class="tag-warn">M</td><td>가스 난방 기여. 단, 가을 음의 잔차 악화 위험 — 교차 시그니처 변수</td><td>active</td></tr>
+        <tr><td><code>cooling_setpoint_offset</code></td><td>↑ (검토)</td><td style="color:var(--muted)">L</td><td>전력 냉방기 과대 일부 기여. chiller_cop 우선 처리 후 재검토</td><td>active</td></tr>
+        <tr><td><code>thermal_mass_multiplier</code></td><td>↑</td><td style="color:var(--muted)">L</td><td>전환기 비선형. 구조적 편차 설명력 낮음</td><td>inactive</td></tr>
+      </tbody>
+    </table>
+  </div>
   <h4>Orchestrator Phase 1 — 라우팅 결정</h4>
-  <div class="placeholder"><b>TBD</b> · 호출된 specialist 인스턴스 + 할당 subset</div>
+  <div class="card" style="font-size:12.5px">
+    <p><b>호출된 specialist (3개)</b> · 미호출 3개 (internal-loads, schedules-operation, thermostat-setpoints)</p>
+    <table>
+      <thead><tr><th>Agent</th><th>할당 Subset</th><th>조정 방향 힌트</th></tr></thead>
+      <tbody>
+        <tr><td>hvac-plant-efficiency-agent</td><td>boiler_efficiency_multiplier, chiller_cop_multiplier, fan_power_multiplier</td><td>boiler ↓ (0.70–0.85) · chiller ↑ (1.1–1.3) · fan ↑ 소폭 (1.05–1.15)</td></tr>
+        <tr><td>envelope-air-exchange-agent</td><td>infiltration_multiplier, wall_u_multiplier, window_u_multiplier</td><td>infiltration ↑ (1.40–1.55) · wall_u ↑ (1.0–1.15) · window_u ↑ (1.0–1.20)</td></tr>
+        <tr><td>dhw-agent</td><td>dhw_use_multiplier</td><td>↑ (1.1–1.5)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted)">교차 시그니처 변수(heating_setpoint_offset, occupancy_density_multiplier, oa_flow_multiplier, hvac_availability_shift) 전부 현행값 동결 — Round 1 원인 추적 명확성 우선.</p>
+  </div>
   <h4>Specialist 후보안</h4>
-  <div class="placeholder"><b>TBD</b> · (변수, 신규 값, 물리 사유) tuple list</div>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>현재값</th><th>제안값</th><th>물리 사유 요약</th></tr></thead>
+      <tbody>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>1.0</td><td><b>0.78</b></td><td>한국 노후 가스보일러 실운전 효율 설계치 대비 22% 저하. 부분부하+배관열손실 복합.</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>1.0</td><td><b>1.20</b></td><td>전기칠러 부분부하 IPLV 운전에서 정격 COP 상회 가능. 칠러 비중 25% 가정.</td></tr>
+        <tr><td><code>fan_power_multiplier</code></td><td>1.0</td><td><b>1.10</b></td><td>FAB 클린룸 HEPA 필터 압손 및 정압 상승으로 설계 팬전력 초과. 연간 상시 운전.</td></tr>
+        <tr><td><code>infiltration_multiplier</code></td><td>1.3677</td><td><b>1.42</b></td><td>FAB 양압 시스템으로 비클린룸 구역 실효 침기율 상승. 동절기 열손실 채널.</td></tr>
+        <tr><td><code>wall_u_multiplier</code></td><td>1.0</td><td><b>1.10</b></td><td>철골조 시공 열교+단열 노화. Phase1-3 수렴값 1.132 교차 검증. ASHRAE 불확실성 범위 내.</td></tr>
+        <tr><td><code>window_u_multiplier</code></td><td>1.0</td><td><b>1.08</b></td><td>ST-Office·ST-Dorm 창호 열교+기밀 저하. 8% 보수적 상향.</td></tr>
+        <tr><td><code>dhw_use_multiplier</code></td><td>1.0</td><td><b>1.25</b></td><td>여름 기저 가스(6월+614, 8월+463 Nm³) DHW 과소 신호. 538 Nm³/월의 70% 귀속 → 1.249.</td></tr>
+      </tbody>
+    </table>
+  </div>
   <h4>Reality 판정</h4>
-  <div class="placeholder"><b>TBD</b> · pass / hold / reject + 사유</div>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>제안값</th><th>판정</th><th>사유</th></tr></thead>
+      <tbody>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>0.78</td><td class="tag-good">PASS</td><td>한국 노후 보일러 22% 저하는 문헌 범위 내. EnergyPlus 수렴 문제 없음.</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>1.20</td><td class="tag-warn">HOLD</td><td>전력 지표(CVRMSE 6.12% PASS)를 악화시킬 위험. 가스 개선에 미기여. 2라운드 재검토 권고.</td></tr>
+        <tr><td><code>fan_power_multiplier</code></td><td>1.10</td><td class="tag-good">PASS</td><td>FAB 클린룸 HEPA 압손으로 정당. 단, chiller_cop와 방향 상충 — 둘 중 하나만 채택 권고.</td></tr>
+        <tr><td><code>infiltration_multiplier</code></td><td>1.42</td><td class="tag-good">PASS</td><td>+3.8% 점진적 상향. FAB 양압 근거 타당. 가을 과대 악화 모니터링 필요.</td></tr>
+        <tr><td><code>wall_u_multiplier</code></td><td>1.10</td><td class="tag-good">PASS</td><td>Phase1-3 수렴값(1.132) 교차 검증. ASHRAE 90.1 불확실성 범위 내.</td></tr>
+        <tr><td><code>window_u_multiplier</code></td><td>1.08</td><td class="tag-warn">HOLD</td><td>infiltration+wall_u와 동시 적용 시 열손실 이중 증폭 위험. wall_u 효과 확인 후 Round 2 재고.</td></tr>
+        <tr><td><code>dhw_use_multiplier</code></td><td>1.25</td><td class="tag-good">PASS</td><td>여름 기저 가스 신호 명확. 연중 균등 적용으로 겨울 가스 소폭 추가 상승 — boiler와 결합 모니터링 필요.</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn" style="margin-top:8px;font-size:12px">
+      <b>결합 모순 주의</b>: A(boiler 0.78)+C(dhw 1.25) 겨울 가스 이중 증폭 위험. chiller_cop(HOLD)+fan_power(PASS) 전력 방향 상충. Reality 권고 채택 조합: boiler=0.78 + infiltration=1.42 + wall_u=1.10 + dhw=1.25 (4변수). chiller·window_u 보류.
+    </div>
+  </div>
   <h4>Orchestrator Phase 2 — 채택</h4>
-  <div class="placeholder"><b>TBD</b> · 채택안, freeze 갱신, hold 목록</div>
+  <div class="card" style="font-size:12.5px">
+    <b>채택 변수 (4개 변경)</b>
+    <table>
+      <thead><tr><th>변수</th><th>Stage1값</th><th>Round1 채택값</th><th>상태</th><th>근거</th></tr></thead>
+      <tbody>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>1.0</td><td><b>0.78</b></td><td class="tag-good">채택</td><td>J 42% 개선 주력. 겨울 가스 잔차 24~35% 감소.</td></tr>
+        <tr><td><code>infiltration_multiplier</code></td><td>1.3677</td><td><b>1.42</b></td><td class="tag-good">채택</td><td>변화율 3.8%. 겨울 열손실 보조. Round 2 변화율 <5% 유지 시 freeze 후보.</td></tr>
+        <tr><td><code>wall_u_multiplier</code></td><td>1.0</td><td><b>1.10</b></td><td class="tag-good">채택</td><td>Phase1-3 수렴값(1.13) 교차 검증. 겨울 열손실 경로 활성화.</td></tr>
+        <tr><td><code>dhw_use_multiplier</code></td><td>1.0</td><td><b>1.25</b></td><td class="tag-warn">채택(조건부)</td><td>여름 6·8월 과대추정 전환 → Round 2에서 0.85~1.05로 하향 재검토 강제.</td></tr>
+      </tbody>
+    </table>
+    <b style="margin-top:8px;display:block">HOLD 목록 (Round 2 재검토)</b>
+    <table>
+      <thead><tr><th>변수</th><th>제안값</th><th>Round 2 조건</th></tr></thead>
+      <tbody>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>1.20</td><td>전력 봄 과대추정 원인이 효율 vs. 스케줄 판별 후 결정</td></tr>
+        <tr><td><code>window_u_multiplier</code></td><td>1.08</td><td>겨울 잔차 Round 2 후에도 >10,000 Nm³ 잔존 시 추가</td></tr>
+        <tr><td><code>fan_power_multiplier</code></td><td>1.10</td><td>chiller_cop 방향 결정 후 연동 검토</td></tr>
+        <tr><td><code>dhw_use_multiplier</code></td><td>→ 0.85~1.05</td><td>Round 2에서 하향 재탐색 (비난방 계절 가스 교정)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">Freeze: 없음 (Round 1 첫 변경). infiltration(3.8% 변화) Round 2 연속 <5% 시 freeze 후보.</p>
+  </div>
   <h4>평가</h4>
-  <div class="placeholder"><b>TBD</b> · J_prev=18.6336 → J_curr=?, 월별 CVRMSE/NMBE 변화</div>
+  <div class="card" style="font-size:12.5px">
+    <div class="kpi" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px">
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">J</div>
+        <div class="value" style="font-size:16px;font-weight:700">14.49 → <span style="color:var(--good)">8.35</span></div>
+        <div class="sub" style="font-size:11px;color:var(--good)">−42.4%</div>
+      </div>
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">CVRMSE_gas</div>
+        <div class="value" style="font-size:16px;font-weight:700">70.66% → <span style="color:var(--warn)">50.56%</span></div>
+        <div class="sub" style="font-size:11px;color:var(--bad)">FAIL (≤15%)</div>
+      </div>
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">NMBE_gas</div>
+        <div class="value" style="font-size:16px;font-weight:700">46.55% → <span style="color:var(--warn)">22.62%</span></div>
+        <div class="sub" style="font-size:11px;color:var(--bad)">FAIL (≤5%)</div>
+      </div>
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">전력</div>
+        <div class="value" style="font-size:16px;font-weight:700;color:var(--good)">6.09% / 0.24%</div>
+        <div class="sub" style="font-size:11px;color:var(--good)">PASS (유지)</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>월</th><th>가스 잔차 Stage1</th><th>가스 잔차 Round1</th><th>전력 잔차 Round1</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>+26,114</td><td style="color:var(--warn)">+19,667</td><td>+8,050</td></tr>
+        <tr><td>2</td><td>+14,739</td><td style="color:var(--warn)">+9,577</td><td>+26,256</td></tr>
+        <tr><td>3</td><td>+12,250</td><td style="color:var(--warn)">+8,567</td><td>−3,538</td></tr>
+        <tr><td>4</td><td>+8,695</td><td style="color:var(--warn)">+6,200</td><td>−31,711</td></tr>
+        <tr><td>5</td><td>+2,714</td><td style="color:var(--good)">+244</td><td>−62,999</td></tr>
+        <tr><td>6</td><td>+614</td><td style="color:var(--bad)">−1,760 ⚠</td><td>−49,221</td></tr>
+        <tr><td>7</td><td>+3,468</td><td style="color:var(--good)">+1,060</td><td>−14,297</td></tr>
+        <tr><td>8</td><td>+463</td><td style="color:var(--bad)">−1,997 ⚠</td><td>−12,250</td></tr>
+        <tr><td>9</td><td>−1,504</td><td style="color:var(--bad)">−3,852 ⚠</td><td>+11,395</td></tr>
+        <tr><td>10</td><td>−510</td><td style="color:var(--bad)">−3,029 ⚠</td><td>+7,312</td></tr>
+        <tr><td>11</td><td>+5,747</td><td style="color:var(--good)">+2,613</td><td>+55,541</td></tr>
+        <tr><td>12</td><td>+7,400</td><td style="color:var(--good)">+1,688</td><td>+83,964</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn" style="margin-top:8px;font-size:12px">
+      <b>Round 2 핵심 과제</b>: ① dhw_use 하향(6·8월 과대 교정) ② 가을(9-10월) 가스 과대 원인 분리 (heating schedule onset) ③ 전력 봄 과대·겨울 과소 패턴 진단
+    </div>
+  </div>
+</details>
+
+<details open>
+  <summary>Round 2 — <span class="tag-bad">완료 (J=11.84, 기각)</span></summary>
+
+  <h4>Diagnostic 결과</h4>
+
+  <h4 style="color:var(--diag);margin-top:10px">▌ 전력 잔차 시그니처 (Round 2)</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>구간</th><th>합계</th><th>방향</th><th>물리 원인</th></tr></thead>
+      <tbody>
+        <tr><td>봄(3–6월)</td><td>−147,469 kWh</td><td style="color:var(--bad)">과대추정</td><td>chiller_cop=1.0 미보정. 냉방 전력 과다 소비. HOLD 해제 시점.</td></tr>
+        <tr><td>여름(7–8월)</td><td>−26,547 kWh</td><td style="color:var(--bad)">약 과대추정</td><td>봄 연속. chiller_cop 조정 시 완화 기대.</td></tr>
+        <tr><td>가을(9–10월)</td><td>+18,707 kWh</td><td style="color:var(--good)">약 과소추정</td><td>중립 구간. R1 변경 영향 없음.</td></tr>
+        <tr><td>겨울(11–12월)</td><td>+139,505 kWh</td><td style="color:var(--good)">과소추정</td><td>동절기 장비·팬 기저부하 과소. equipment_schedule 계절 불일치 가능성.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">R1 변경(boiler/infiltration/wall_u)이 전력에 영향 없음 확인. 봄 과대(-148k) ↔ 겨울 과소(+140k) 상쇄 구조 유지. chiller_cop HOLD 해제 조건 충족.</p>
+  </div>
+
+  <h4 style="color:var(--diag);margin-top:10px">▌ 가스 잔차 시그니처 (Round 2)</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>구간</th><th>잔차</th><th>방향</th><th>원인</th></tr></thead>
+      <tbody>
+        <tr><td>동절기(1–4월)</td><td>+44,010 Nm³</td><td style="color:var(--bad)">과소추정 잔존</td><td>boiler/infiltration/wall_u 보정 후에도 잔존. 추가 조정 여지.</td></tr>
+        <tr><td>여름 기저(6,8월)</td><td>−3,757 Nm³</td><td style="color:var(--bad)">과대추정 전환 ⚠</td><td>dhw_use=1.25 과도. 배율 1.39~1.44x. 이론 최적 dhw_use ≈ 0.74.</td></tr>
+        <tr><td>가을(9–10월)</td><td>−6,881 Nm³</td><td style="color:var(--bad)">심각 악화 ⚠</td><td>9월: DHW 계절 감소 미반영 (연구시설 방학). 10월: DHW+조기 난방 복합.</td></tr>
+        <tr><td>봄·초겨울(5,11–12월)</td><td>+4,545 Nm³</td><td style="color:var(--good)">대폭 개선</td><td>R1 효과 양호.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">비난방 기저(6,8,9,10월): 시뮬 평균 6,500 Nm³/월 vs 실측 3,841 Nm³/월 → +69% 과다. dhw_use 하향이 최우선.</p>
+  </div>
+
+  <h4 style="color:var(--orch);margin-top:10px">▌ 교차 시그니처 (Round 2)</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>전력 영향</th><th>가스 영향</th><th>결합 판단</th></tr></thead>
+      <tbody>
+        <tr><td><code>hvac_availability_shift</code></td><td>봄 냉방 조기 가동 과대 기여</td><td>10월 조기 난방 과대 기여 가능</td><td class="tag-warn">MEDIUM — dhw_use 재조정 후 분리 판별</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>봄 과대 직접 해소</td><td>무관 (전기칠러)</td><td class="tag-good">전력 전용 독립 레버 — HOLD 해제 조건 충족</td></tr>
+        <tr><td><code>dhw_use_multiplier</code></td><td>무관</td><td>비난방 과대 주원인</td><td class="tag-bad">가스 전용 최우선 — 즉시 하향</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 style="color:var(--ink);margin-top:10px">▌ Variable Candidate List (Round 2 통합)</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>방향</th><th>우선순위</th><th>근거</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>dhw_use_multiplier</code></td><td>↓ (1.25→0.74~0.82)</td><td class="tag-bad">H</td><td>비난방 기저 과대 +69% 주원인. 이론 최적 0.74. 동절기 NMBE 일시 악화 감수.</td><td>active(조건부)</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>↑ (1.0→1.05~1.20)</td><td class="tag-bad">H</td><td>봄 전력 과대 -148k kWh. HOLD 해제 조건 충족. 가스 무간섭.</td><td>HOLD→해제</td></tr>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>재평가 (dhw_use↓ 후)</td><td class="tag-warn">M</td><td>동절기 잔차 재측정 후 추가 하향 또는 유지 결정.</td><td>active</td></tr>
+        <tr><td><code>heating_setpoint_offset</code></td><td>재검토 (조건부)</td><td class="tag-warn">M</td><td>10월 조기 난방 기여 가능. dhw_use 재조정 후 분리 판별.</td><td>active</td></tr>
+        <tr><td><code>infiltration_multiplier</code></td><td>↑ (조건부 1.50~1.60)</td><td style="color:var(--muted)">L</td><td>동절기 잔차 +20k Nm³ 이상 잔존 시만 검토.</td><td>active</td></tr>
+        <tr><td><code>window_u_multiplier</code></td><td>↑ (조건부 1.08~1.15)</td><td style="color:var(--muted)">L</td><td>동절기 잔차 +15k Nm³ 이상 잔존 시만 검토. wall_u와 복합 위험.</td><td>HOLD</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note info" style="margin-top:8px;font-size:12px">
+    <b>Round 2 실행 전략</b>: dhw_use 하향(가스 비난방 교정) + chiller_cop 상향(전력 봄 교정) 동시 투입. 두 변수가 서로 다른 에너지원에 독립적으로 작용하므로 hybrid 채택 가능. boiler_eff·envelope 변수는 dhw_use 재조정 후 동절기 잔차 재측정 결과에 따라 결정.
+  </div>
+
+  <h4>Orchestrator Phase 1 — 라우팅 결정</h4>
+  <div class="card" style="font-size:12.5px">
+    <p><b>호출된 specialist (2개)</b> · 미호출 4개 (envelope, internal-loads, schedules, thermostat)</p>
+    <table>
+      <thead><tr><th>Agent</th><th>할당 Subset</th><th>조정 방향</th></tr></thead>
+      <tbody>
+        <tr><td>dhw-agent</td><td>dhw_use_multiplier</td><td>↓ 0.74–0.92, 착지점 0.85 (6,8월 DHW 신호 기반)</td></tr>
+        <tr><td>hvac-plant-efficiency-agent</td><td>boiler_efficiency_multiplier, chiller_cop_multiplier</td><td>boiler ↓ 0.70–0.80 / chiller ↑ 1.05–1.15</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted)">hvac_availability_shift: 전력·가스 양측 교차 변수 — dhw+boiler 재조정 후 10월 가스 잔존 시 Round 3 재검토.</p>
+  </div>
+
+  <h4>Specialist 후보안</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>현재값</th><th>제안값</th><th>물리 사유 요약</th></tr></thead>
+      <tbody>
+        <tr><td><code>dhw_use_multiplier</code></td><td>1.25</td><td><b>0.85</b></td><td>6,8월 DHW 과대비율 1.412 → 이론 최적 0.885에서 보수적 착지. 겨울 DHW −2,112 Nm³/월 감소 수용.</td></tr>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>0.78</td><td><b>0.74</b></td><td>dhw=0.85 하향 후 난방시즌 DHW 감소 보완. baseline×0.74=0.629. 구형 보일러 현실 범위.</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>1.0</td><td><b>1.10</b></td><td>봄 냉방 과대추정 −147,469 kWh 교정. 냉방전력 −59,000 kWh/년. 보수적 착지(상한 1.15).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Reality 판정</h4>
+  <div class="card" style="font-size:12.5px">
+    <table>
+      <thead><tr><th>변수</th><th>제안값</th><th>판정</th><th>사유</th></tr></thead>
+      <tbody>
+        <tr><td><code>dhw_use_multiplier</code></td><td>0.85</td><td class="tag-good">PASS</td><td>6,8월 신호월 근거 명확. 겨울 악화 +4,100 Nm³ 수준으로 관리 가능.</td></tr>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>0.74</td><td class="tag-warn">HOLD</td><td>물리 하한 미위반이나, "DHW 보완" 논리 불일치 — 실제로 겨울 가스 순감소(-4,107 Nm³) 발생. CVRMSE 개선 기여 없음. Round 3 재평가 권고.</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>1.10</td><td class="tag-good">PASS</td><td>봄 전력 과대 40% 교정. CVRMSE_elec PASS 유지(추정 5.44%). 가을 악화 1,500~3,000 kWh 관리 가능.</td></tr>
+      </tbody>
+    </table>
+    <div class="note info" style="margin-top:8px;font-size:12px">
+      <b>Reality 권고 채택 조합</b>: dhw=0.85 + chiller=1.10 (boiler 0.78 유지). boiler 0.74는 HOLD — 동절기 잔차는 heating demand(envelope·schedule) 영역 과제로 분리.
+    </div>
+  </div>
+  <h4>Orchestrator Phase 2 — 채택</h4>
+  <div class="card" style="font-size:12.5px">
+    <div class="note warn" style="margin-bottom:8px"><b>전체 기각 — best-so-far(Round 1) 유지</b>. J 악화(8.35→11.84) 시 framework 규칙: best-so-far 유지, freeze 갱신 건너뜀.</div>
+    <table>
+      <thead><tr><th>변수</th><th>제안값</th><th>결정</th><th>근거</th></tr></thead>
+      <tbody>
+        <tr><td><code>dhw_use_multiplier</code></td><td>0.85</td><td class="tag-bad">기각</td><td>6,8월 교정 성공했으나 연간 가스 24,339 Nm³ 감소 → NMBE_gas 22.62%→36.77% 심각 악화. J 기여 +2.83.</td></tr>
+        <tr><td><code>chiller_cop_multiplier</code></td><td>1.10</td><td class="tag-bad">기각</td><td>봄·여름 전력 개선 성공. 그러나 NMBE_elec 0.24%→1.07% 악화. J 기여 +0.17. 단독 J=8.50 > R1 J=8.35.</td></tr>
+        <tr><td><code>boiler_efficiency_multiplier</code></td><td>0.74</td><td class="tag-warn">HOLD 유지</td><td>Round 2 미적용. 겨울 가스 순감소 논리 불일치 확인.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:6px">Freeze 갱신: 없음 (J 악화 라운드). 유효 best params = Round 1 채택값.</p>
+  </div>
+  <h4>평가</h4>
+  <div class="card" style="font-size:12.5px">
+    <div class="kpi" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px">
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">J</div>
+        <div class="value" style="font-size:16px;font-weight:700">8.35 → <span style="color:var(--bad)">11.84</span></div>
+        <div class="sub" style="font-size:11px;color:var(--bad)">+41.8% 악화 → 기각</div>
+      </div>
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">NMBE_gas</div>
+        <div class="value" style="font-size:16px;font-weight:700">22.62% → <span style="color:var(--bad)">36.77%</span></div>
+        <div class="sub" style="font-size:11px;color:var(--bad)">주요 악화 원인</div>
+      </div>
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">NMBE_elec</div>
+        <div class="value" style="font-size:16px;font-weight:700">0.24% → <span style="color:var(--warn)">1.07%</span></div>
+        <div class="sub" style="font-size:11px;color:var(--good)">PASS 유지</div>
+      </div>
+      <div class="item" style="background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px">
+        <div class="label" style="font-size:11px;color:var(--muted)">CVRMSE_elec</div>
+        <div class="value" style="font-size:16px;font-weight:700;color:var(--good)">6.09→5.83%</div>
+        <div class="sub" style="font-size:11px;color:var(--good)">유일한 개선</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>월</th><th>가스 R1</th><th>가스 R2</th><th>전력 R1</th><th>전력 R2</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>+19,667</td><td style="color:var(--bad)">+21,735</td><td>+8,050</td><td>+8,658</td></tr>
+        <tr><td>2</td><td>+9,577</td><td style="color:var(--bad)">+11,448</td><td>+26,256</td><td>+27,030</td></tr>
+        <tr><td>3</td><td>+8,567</td><td style="color:var(--bad)">+10,657</td><td>−3,538</td><td style="color:var(--good)">−2,129</td></tr>
+        <tr><td>4</td><td>+6,200</td><td style="color:var(--bad)">+8,172</td><td>−31,711</td><td style="color:var(--good)">−27,246</td></tr>
+        <tr><td>5</td><td>+244</td><td style="color:var(--bad)">+2,334</td><td>−62,999</td><td style="color:var(--good)">−55,483</td></tr>
+        <tr><td>6</td><td style="color:var(--bad)">−1,760</td><td style="color:var(--good)">+257 ✓</td><td>−49,221</td><td style="color:var(--good)">−39,573</td></tr>
+        <tr><td>7</td><td>+1,060</td><td style="color:var(--bad)">+3,106</td><td>−14,297</td><td style="color:var(--good)">−3,155</td></tr>
+        <tr><td>8</td><td style="color:var(--bad)">−1,997</td><td style="color:var(--good)">+93 ✓</td><td>−12,250</td><td style="color:var(--good)">−881</td></tr>
+        <tr><td>9</td><td style="color:var(--bad)">−3,852</td><td style="color:var(--good)">−1,857 ✓</td><td>+11,395</td><td style="color:var(--bad)">+20,797</td></tr>
+        <tr><td>10</td><td style="color:var(--bad)">−3,029</td><td style="color:var(--good)">−962 ✓</td><td>+7,312</td><td style="color:var(--bad)">+13,378</td></tr>
+        <tr><td>11</td><td>+2,613</td><td style="color:var(--bad)">+4,630</td><td>+55,541</td><td>+57,562</td></tr>
+        <tr><td>12</td><td>+1,688</td><td style="color:var(--bad)">+3,733</td><td>+83,964</td><td>+84,491</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn" style="margin-top:8px;font-size:12px">
+      <b>교훈</b>: dhw_use↓가 6,8,9,10월 가스를 교정했으나 연간 시뮬 가스 −24,339 Nm³ 감소 → NMBE_gas 대폭 악화. J 함수 내 NMBE_gas 가중치(0.2)가 지배적. dhw_use 기준 연간 baseline DHW ≈ 60,848 Nm³로 추정 (기존 여름 신호 기반 18,180 Nm³ 추정의 3.4배). chiller_cop↑는 봄·여름 전력 월별 개선에 성공했으나 연간 NMBE_elec 악화 → J 기여 −0.15.
+    </div>
+  </div>
 </details>
 
 <details>
-  <summary>Round 2 — <span style="color:var(--muted)">미시작</span></summary>
-  <div class="placeholder"><b>TBD</b> · Round 1 동일 템플릿으로 채워짐</div>
-</details>
-
-<details>
-  <summary>Round 3 — <span style="color:var(--muted)">미시작</span></summary>
+  <summary>Round 3 — <span class="tag-warn">진행 예정</span></summary>
   <div class="placeholder"><b>TBD</b></div>
 </details>
 
@@ -384,6 +889,145 @@
 </details>
 
 <!-- =========================================================
+     9. Round 1 실행 컨텍스트
+========================================================= -->
+<h2>9. Round 1 실행 컨텍스트 (Phase 1-2 기반)</h2>
+<p style="font-size:13px;color:var(--muted)">아래는 Step 2 Round 1 diagnostic 에이전트에 주입되는 실제 데이터. Phase 1-2 최종 결과 기준.</p>
+
+<h3>9.1 Stage 1 입력 (공통 컨텍스트)</h3>
+<div class="grid grid-2">
+  <div class="card">
+    <h4>Stage 1 Best Parameters (10 active)</h4>
+    <table>
+      <thead><tr><th>변수</th><th>최종값</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td><code>equipment_multiplier</code></td><td>1.4450</td><td>Stage 1 active</td></tr>
+        <tr><td><code>lighting_multiplier</code></td><td>0.8958</td><td>Stage 1 active</td></tr>
+        <tr><td><code>occupancy_density_multiplier</code></td><td>1.6695</td><td>Stage 1 active</td></tr>
+        <tr><td><code>occupancy_schedule_multiplier</code></td><td>1.4416</td><td>Stage 1 active</td></tr>
+        <tr><td><code>hvac_availability_shift</code></td><td>−1 h</td><td>Stage 1 active</td></tr>
+        <tr><td><code>heating_setpoint_offset</code></td><td>+1.086 °C</td><td>Stage 1 active</td></tr>
+        <tr><td><code>cooling_setpoint_offset</code></td><td>+1.382 °C</td><td>Stage 1 active</td></tr>
+        <tr><td><code>setback_delta_offset</code></td><td>+0.180 °C</td><td>Stage 1 active</td></tr>
+        <tr><td><code>infiltration_multiplier</code></td><td>1.3677</td><td>Stage 1 active</td></tr>
+        <tr><td><code>oa_flow_multiplier</code></td><td>1.2221</td><td>Stage 1 active</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">나머지 12개 변수는 모두 neutral(1.0 or 0). Stage 2 전체 22개 pool 대상.</p>
+  </div>
+  <div class="card">
+    <h4>Score 요약</h4>
+    <table>
+      <thead><tr><th>지표</th><th>값</th><th>ASHRAE G14</th></tr></thead>
+      <tbody>
+        <tr><td>CVRMSE_elec</td><td>6.12%</td><td class="tag-good">PASS (≤15%)</td></tr>
+        <tr><td>NMBE_elec</td><td>0.29%</td><td class="tag-good">PASS (≤5%)</td></tr>
+        <tr><td>CVRMSE_gas</td><td>70.66%</td><td class="tag-bad">FAIL</td></tr>
+        <tr><td>NMBE_gas</td><td>46.55%</td><td class="tag-bad">FAIL</td></tr>
+        <tr><td>best_J</td><td>14.49</td><td>—</td></tr>
+        <tr><td>연간 전기 오차</td><td>−0.29%</td><td class="tag-good">PASS</td></tr>
+        <tr><td>연간 가스 오차</td><td>−46.55%</td><td class="tag-bad">FAIL</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:4px">stop_reason: convergence · frozen_vars: 없음</p>
+  </div>
+</div>
+
+<h3>9.2 월별 잔차 (실측 − 시뮬레이션)</h3>
+<div class="grid grid-2">
+  <div class="card">
+    <h4>전력 (kWh) — 연간 오차 −0.29%</h4>
+    <table>
+      <thead><tr><th>월</th><th>실측</th><th>시뮬</th><th>잔차</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>620,164</td><td>610,996</td><td style="color:var(--good)">+9,168</td></tr>
+        <tr><td>2</td><td>574,285</td><td>547,298</td><td style="color:var(--good)">+26,987</td></tr>
+        <tr><td>3</td><td>603,401</td><td>606,486</td><td style="color:var(--bad)">−3,085</td></tr>
+        <tr><td>4</td><td>587,738</td><td>619,357</td><td style="color:var(--bad)">−31,619</td></tr>
+        <tr><td>5</td><td>616,160</td><td>679,140</td><td style="color:var(--bad)">−62,980</td></tr>
+        <tr><td>6</td><td>643,127</td><td>692,281</td><td style="color:var(--bad)">−49,154</td></tr>
+        <tr><td>7</td><td>725,611</td><td>739,678</td><td style="color:var(--bad)">−14,067</td></tr>
+        <tr><td>8</td><td>732,679</td><td>744,667</td><td style="color:var(--bad)">−11,988</td></tr>
+        <tr><td>9</td><td>699,116</td><td>687,659</td><td style="color:var(--good)">+11,457</td></tr>
+        <tr><td>10</td><td>665,684</td><td>658,375</td><td style="color:var(--good)">+7,309</td></tr>
+        <tr><td>11</td><td>650,384</td><td>594,428</td><td style="color:var(--good)">+55,956</td></tr>
+        <tr><td>12</td><td>689,839</td><td>605,030</td><td style="color:var(--good)">+84,809</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h4>가스 (Nm³) — 연간 오차 −46.55%</h4>
+    <table>
+      <thead><tr><th>월</th><th>실측</th><th>시뮬</th><th>잔차</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>44,378</td><td>18,264</td><td style="color:var(--bad)">+26,114 🔴</td></tr>
+        <tr><td>2</td><td>28,887</td><td>14,148</td><td style="color:var(--bad)">+14,739 🔴</td></tr>
+        <tr><td>3</td><td>20,677</td><td>8,427</td><td style="color:var(--bad)">+12,250 🔴</td></tr>
+        <tr><td>4</td><td>13,170</td><td>4,475</td><td style="color:var(--bad)">+8,695</td></tr>
+        <tr><td>5</td><td>6,844</td><td>4,130</td><td style="color:var(--warn)">+2,714</td></tr>
+        <tr><td>6</td><td>4,564</td><td>3,950</td><td style="color:var(--warn)">+614</td></tr>
+        <tr><td>7</td><td>7,475</td><td>4,007</td><td style="color:var(--warn)">+3,468</td></tr>
+        <tr><td>8</td><td>4,556</td><td>4,093</td><td style="color:var(--warn)">+463</td></tr>
+        <tr><td>9</td><td>2,403</td><td>3,907</td><td style="color:var(--good)">−1,504</td></tr>
+        <tr><td>10</td><td>3,840</td><td>4,350</td><td style="color:var(--good)">−510</td></tr>
+        <tr><td>11</td><td>12,381</td><td>6,634</td><td style="color:var(--bad)">+5,747</td></tr>
+        <tr><td>12</td><td>23,112</td><td>15,712</td><td style="color:var(--bad)">+7,400</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="note warn" style="margin-top:8px">
+  <b>Round 1 진단 포인트</b>: 전력은 연간 합계는 맞지만 <b>봄·여름 과다추정 / 겨울 과소추정</b> 계절 편향이 있음. 가스는 <b>겨울(1–4월) 심각한 과소추정</b> — 시뮬이 실측의 40~57%만 예측. 비냉방 시즌(6–8월) 기저 가스(DHW 추정) ~4,000 Nm³/월은 비교적 근접. 9–10월 소폭 과대추정.
+</div>
+
+<h3>9.3 병렬 실행 순서</h3>
+<div class="flow">
+  <div class="step">
+    <div class="num"></div>
+    <div class="body">
+      <div class="title">[병렬] Diagnostic — electricity-diagnostic-agent + gas-diagnostic-agent</div>
+      <div class="desc">공통 컨텍스트(9.1, 9.2) + 각자 modality 데이터 → 시그니처 + candidate list 반환</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num"></div>
+    <div class="body">
+      <div class="title">Orchestrator Phase 1 — 라우팅 결정</div>
+      <div class="desc">두 diagnostic 출력 + 교차 시그니처 통합 → specialist subset 할당 (Round 1: gas dominant이므로 gas 관련 specialists 위주 호출 예상)</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num"></div>
+    <div class="body">
+      <div class="title">[병렬] Specialist agents — orchestrator가 동적 할당</div>
+      <div class="desc">각 specialist가 할당 subset 내 (변수, 신규 값, 사유) tuple 반환. 동시 실행.</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num"></div>
+    <div class="body">
+      <div class="title">Reality agent — 사후 검토</div>
+      <div class="desc">모든 specialist 후보안에 대해 hard reject / soft hold / pass 판정</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num"></div>
+    <div class="body">
+      <div class="title">EnergyPlus 시뮬레이션</div>
+      <div class="desc">채택 후보안 적용 OSM → 시뮬 → 월별 결과 → J 재계산</div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num"></div>
+    <div class="body">
+      <div class="title">Orchestrator Phase 2 — 채택·freeze·hold</div>
+      <div class="desc">J 비교 + reality 판정 기반 최종 채택. per-variable 변동 기준 freeze 갱신. 감사 로그.</div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
      8. 변경 이력
 ========================================================= -->
 <h2>8. 변경 이력</h2>
@@ -391,6 +1035,7 @@
   <thead><tr><th style="width:120px">날짜</th><th>변경 내용</th></tr></thead>
   <tbody>
     <tr><td>2026-05-11</td><td>초안 생성. Stage 1 산출물 요약, agent 토폴로지(10개), 라운드 흐름, 채택·제약·종료 조건, Phase 결과 placeholder 골격.</td></tr>
+    <tr><td>2026-05-11</td><td>각 agent 카드에 Brief 템플릿 &lt;details&gt; 추가 (입력 컨텍스트·출력 형식·제약). Section 9 Round 1 실행 컨텍스트 (Phase 1-2 실데이터·월별 잔차·병렬 실행 순서) 추가. Round 1 J 기준값 14.49로 갱신.</td></tr>
   </tbody>
 </table>
 

@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "run": "step2_round2_dhw",
+    "base": "step2_round2_base",
+    "agent": "DHW specialist",
+    "created": "2026-05-11",
+    "description": "Round 2 DHW specialist 제안안. dhw_use_multiplier 1.25->0.85 하향 조정. 6,8월 순수 DHW 과대추정 교정.",
+    "changed_vars": ["dhw_use_multiplier"],
+    "rationale": {
+      "diagnosis": "6월(시뮬/실측=1.386), 8월(시뮬/실측=1.438) 순수 DHW 신호월 과대추정 확인. 평균 비율 1.412에서 이론 최적값 = 1.25/1.412 = 0.885.",
+      "adopted_value": 0.85,
+      "deviation_from_theory": "이론값(0.885) 대비 0.035 보수적. 9,10월 잔차가 DHW 단독으로 설명 불가(방학·점유 복합)이므로 흡수 시도 금지.",
+      "summer_correction": "6월 예상 잔차 +264 Nm³(+5.8%), 8월 +100 Nm³(+2.2%) — 순수 DHW 관점에서 수용 범위",
+      "winter_impact": "DHW 월 기저 감소분 약 2,112 Nm³/월. 동절기 시뮬 소폭 추가 악화 감수. 1월 예상 22,599 Nm³(실측 44,378, 잔차 +21,779)"
+    }
+  },
+  "equipment_multiplier": 1.4449828421840456,
+  "lighting_multiplier": 0.8958476758549521,
+  "occupancy_density_multiplier": 1.6694997374890812,
+  "occupancy_schedule_multiplier": 1.4416039376428627,
+  "lighting_schedule_multiplier": 1.0,
+  "equipment_schedule_multiplier": 1.0,
+  "hvac_availability_shift": -1,
+  "heating_setpoint_offset": 1.0863153419864489,
+  "cooling_setpoint_offset": 1.382149794798482,
+  "setback_delta_offset": 0.18034519920761305,
+  "infiltration_multiplier": 1.42,
+  "wall_u_multiplier": 1.10,
+  "roof_u_multiplier": 1.0,
+  "window_u_multiplier": 1.0,
+  "window_shgc_multiplier": 1.0,
+  "floor_u_multiplier": 1.0,
+  "oa_flow_multiplier": 1.2221234549004705,
+  "fan_power_multiplier": 1.0,
+  "boiler_efficiency_multiplier": 0.78,
+  "chiller_cop_multiplier": 1.0,
+  "dhw_use_multiplier": 0.85,
+  "thermal_mass_multiplier": 1.0
+}

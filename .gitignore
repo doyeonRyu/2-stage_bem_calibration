@@ -1,4 +1,6 @@
+# =========================================================
 # Python
+# =========================================================
 __pycache__/
 *.py[cod]
 *.pyo
@@ -11,36 +13,110 @@ __pycache__/
 venv/
 env/
 
+# =========================================================
 # OS / editor
+# =========================================================
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
 
+# =========================================================
 # Local workspace / note tooling
+# =========================================================
 .claude/
 .codex/
 .obsidian/
 
-# Generated simulation / calibration outputs
+# =========================================================
+# Optuna trial outputs (5+ GB — local only)
+# =========================================================
+materials/optuna/trials/
+
+# =========================================================
+# Multi-agent generated outputs
+# =========================================================
+materials/multi-agent/outputs/
+materials/multi-agent/osm/*
+
+# =========================================================
+# General simulation / calibration outputs
+# =========================================================
 materials/code/__pycache__/
 materials/evaluation_runs/
-materials/multi-agent/outputs/
 osm/optuna_result/
 osm/multi-agent_result/
 graphify-out/
 
-# Generated OpenStudio / EnergyPlus artifacts
+# =========================================================
+# EnergyPlus run artifacts
+# =========================================================
+# Workflow / case
 *.osw
+out.osw
+workflow.osw
+
+# SQL / output
 *.sql
 eplusout.*
+eplustbl.htm
+eplustbl.html
+expandedidf.*
 
-# Large or sensitive raw/reference data
+# E+ output extensions
+*.eso
+*.eio
+*.bnd
+*.audit
+*.mtr
+*.mtd
+*.mdd
+*.rdd
+*.shd
+*.dxf
+*.end
+*.err
+
+# E+ sizing CSVs
+eplusssz.*
+epluspsz.*
+epluszsz.*
+
+# E+ run state / stdout
+finished.job
+started.job
+stdout-energyplus
+stdout
+stderr
+*.log
+
+# OpenStudio data points
+data_point.zip
+data_point_out.json
+in.idf
+
+# =========================================================
+# Weather files (large, distribute separately)
+# =========================================================
+*.epw
+*.stat
+*.ddy
+
+# =========================================================
+# Large or sensitive raw / reference data
+# =========================================================
 raw/
 refs/
 result/
 
-# Optional local generated params/results
-# Keep if you want reproducible sample artifacts in git.
-# materials/building_params/*.json
+# =========================================================
+# Misc local notes
+# =========================================================
 추가할것.md
+
+ppt/*
