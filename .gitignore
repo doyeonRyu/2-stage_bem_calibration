@@ -25,9 +25,6 @@ Thumbs.db
 # Generated simulation / calibration outputs
 materials/code/__pycache__/
 materials/evaluation_runs/
-materials/optuna/studies/
-materials/optuna/summaries/
-materials/optuna/trials/
 materials/multi-agent/outputs/
 osm/optuna_result/
 osm/multi-agent_result/
