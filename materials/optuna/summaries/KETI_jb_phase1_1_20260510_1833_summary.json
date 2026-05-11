@@ -1,0 +1,1273 @@
+{
+  "study_name": "KETI_jb_phase1_1",
+  "run_name": "KETI_jb_phase1_1_20260510_1833",
+  "started": "2026-05-10T18:33:26",
+  "ended": "2026-05-10T22:41:40",
+  "duration_sec": 14894.554553,
+  "stop_reason": "convergence",
+  "thresholds": {
+    "n_trial": 10,
+    "r_max": 7,
+    "rho": 0.7,
+    "theta_J": 0.01,
+    "theta_freeze": 0.05
+  },
+  "active_vars": [
+    "equipment_multiplier",
+    "lighting_multiplier",
+    "occupancy_density_multiplier",
+    "hvac_availability_shift",
+    "heating_setpoint_offset",
+    "cooling_setpoint_offset",
+    "infiltration_multiplier"
+  ],
+  "frozen_vars": {
+    "equipment_multiplier": 1.4134842424805476,
+    "hvac_availability_shift": 0,
+    "cooling_setpoint_offset": 2.9985757330029386
+  },
+  "current_best": {
+    "equipment_multiplier": 1.4134842424805476,
+    "lighting_multiplier": 1.0947228839342196,
+    "occupancy_density_multiplier": 1.247016227947725,
+    "hvac_availability_shift": 0,
+    "heating_setpoint_offset": 2.9934843190426483,
+    "cooling_setpoint_offset": 2.9985757330029386,
+    "infiltration_multiplier": 1.5527989208575699
+  },
+  "full_final": {
+    "equipment_multiplier": 1.4134842424805476,
+    "lighting_multiplier": 1.0947228839342196,
+    "occupancy_density_multiplier": 1.247016227947725,
+    "occupancy_schedule_multiplier": 1.0,
+    "lighting_schedule_multiplier": 1.0,
+    "equipment_schedule_multiplier": 1.0,
+    "hvac_availability_shift": 0,
+    "heating_setpoint_offset": 2.9934843190426483,
+    "cooling_setpoint_offset": 2.9985757330029386,
+    "setback_delta_offset": 0.0,
+    "infiltration_multiplier": 1.5527989208575699,
+    "wall_u_multiplier": 1.0,
+    "roof_u_multiplier": 1.0,
+    "window_u_multiplier": 1.0,
+    "window_shgc_multiplier": 1.0,
+    "floor_u_multiplier": 1.0,
+    "oa_flow_multiplier": 1.0,
+    "fan_power_multiplier": 1.0,
+    "boiler_efficiency_multiplier": 1.0,
+    "chiller_cop_multiplier": 1.0,
+    "dhw_use_multiplier": 1.0,
+    "thermal_mass_multiplier": 1.0
+  },
+  "best_J": 18.28260671325368,
+  "J_history": [
+    18.841917117950103,
+    18.70975529275343,
+    18.402649546202305,
+    18.383706063933186,
+    18.28260671325368
+  ],
+  "rounds": [
+    {
+      "round_num": 1,
+      "study_name": "KETI_jb_phase1_1_20260510_1833__round_1",
+      "round_dir": "/mnt/c/Users/ryudo/optuna_trials/KETI_jb_phase1_1_20260510_1833/round_1",
+      "active_vars": [
+        "equipment_multiplier",
+        "lighting_multiplier",
+        "occupancy_density_multiplier",
+        "hvac_availability_shift",
+        "heating_setpoint_offset",
+        "cooling_setpoint_offset",
+        "infiltration_multiplier"
+      ],
+      "frozen_vars": {},
+      "alpha_per_var": {
+        "equipment_multiplier": 0.35,
+        "lighting_multiplier": 0.35,
+        "occupancy_density_multiplier": 0.42,
+        "hvac_availability_shift": 1.4,
+        "heating_setpoint_offset": 1.75,
+        "cooling_setpoint_offset": 1.75,
+        "infiltration_multiplier": 0.5249999999999999
+      },
+      "search_space": {
+        "equipment_multiplier": {
+          "low": 0.7,
+          "high": 1.7
+        },
+        "lighting_multiplier": {
+          "low": 0.5,
+          "high": 1.5
+        },
+        "occupancy_density_multiplier": {
+          "low": 0.5,
+          "high": 1.7
+        },
+        "hvac_availability_shift": {
+          "low": -2.0,
+          "high": 2.0
+        },
+        "heating_setpoint_offset": {
+          "low": -2.0,
+          "high": 3.0
+        },
+        "cooling_setpoint_offset": {
+          "low": -2.0,
+          "high": 3.0
+        },
+        "infiltration_multiplier": {
+          "low": 0.5,
+          "high": 2.0
+        }
+      },
+      "n_trial": 10,
+      "best_J": 18.841917117950103,
+      "best_params": {
+        "heating_setpoint_offset": 1.4793541873841831,
+        "cooling_setpoint_offset": 2.5543784446880933,
+        "equipment_multiplier": 1.4210543014968775,
+        "lighting_multiplier": 0.9808112440301913,
+        "occupancy_density_multiplier": 1.2605700023994828,
+        "hvac_availability_shift": 2,
+        "infiltration_multiplier": 1.2763042608199089
+      },
+      "full_best": {
+        "equipment_multiplier": 1.4210543014968775,
+        "lighting_multiplier": 0.9808112440301913,
+        "occupancy_density_multiplier": 1.2605700023994828,
+        "occupancy_schedule_multiplier": 1.0,
+        "lighting_schedule_multiplier": 1.0,
+        "equipment_schedule_multiplier": 1.0,
+        "hvac_availability_shift": 2,
+        "heating_setpoint_offset": 1.4793541873841831,
+        "cooling_setpoint_offset": 2.5543784446880933,
+        "setback_delta_offset": 0.0,
+        "infiltration_multiplier": 1.2763042608199089,
+        "wall_u_multiplier": 1.0,
+        "roof_u_multiplier": 1.0,
+        "window_u_multiplier": 1.0,
+        "window_shgc_multiplier": 1.0,
+        "floor_u_multiplier": 1.0,
+        "oa_flow_multiplier": 1.0,
+        "fan_power_multiplier": 1.0,
+        "boiler_efficiency_multiplier": 1.0,
+        "chiller_cop_multiplier": 1.0,
+        "dhw_use_multiplier": 1.0,
+        "thermal_mass_multiplier": 1.0
+      },
+      "improved": true,
+      "stable_count": {
+        "equipment_multiplier": 0,
+        "lighting_multiplier": 1,
+        "occupancy_density_multiplier": 0,
+        "hvac_availability_shift": 0,
+        "heating_setpoint_offset": 0,
+        "cooling_setpoint_offset": 0,
+        "infiltration_multiplier": 0
+      },
+      "stagnant_count": 0,
+      "duration_sec": 3094.739862680435,
+      "trial_records": [
+        {
+          "number": 0,
+          "value": 19.598886316406357,
+          "params": {
+            "heating_setpoint_offset": 2.095235253721439,
+            "cooling_setpoint_offset": 2.5623803739976827,
+            "equipment_multiplier": 1.4752828806881757,
+            "lighting_multiplier": 1.0502817752005467,
+            "occupancy_density_multiplier": 0.6633961487403869,
+            "hvac_availability_shift": -2,
+            "infiltration_multiplier": 1.777177606002867
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 1,
+          "value": 23.1071701582256,
+          "params": {
+            "heating_setpoint_offset": 2.8570776154274,
+            "cooling_setpoint_offset": 2.9148333693466353,
+            "equipment_multiplier": 0.780492413254505,
+            "lighting_multiplier": 0.7645241048361087,
+            "occupancy_density_multiplier": 1.4112396077200307,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 1.5824197132786026
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 2,
+          "value": 19.879466454922643,
+          "params": {
+            "heating_setpoint_offset": 2.104473946334923,
+            "cooling_setpoint_offset": 2.59085397633733,
+            "equipment_multiplier": 1.448463072997622,
+            "lighting_multiplier": 1.3750388724260396,
+            "occupancy_density_multiplier": 0.5323286069960657,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 1.2103724965884444
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 3,
+          "value": 20.580139010122682,
+          "params": {
+            "heating_setpoint_offset": -0.22923536799717414,
+            "cooling_setpoint_offset": 0.4990316088482426,
+            "equipment_multiplier": 1.1372634189582622,
+            "lighting_multiplier": 1.3865265955921466,
+            "occupancy_density_multiplier": 1.0162838538586074,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 1.635439726167792
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 4,
+          "value": 21.797850070292714,
+          "params": {
+            "heating_setpoint_offset": 0.24891979840612555,
+            "cooling_setpoint_offset": 2.5358116841136997,
+            "equipment_multiplier": 1.616958459401081,
+            "lighting_multiplier": 0.626866466877664,
+            "occupancy_density_multiplier": 0.5069263150325292,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.630527419504261
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 5,
+          "value": 19.51892086585167,
+          "params": {
+            "heating_setpoint_offset": 0.7798133044531914,
+            "cooling_setpoint_offset": 1.076987202401276,
+            "equipment_multiplier": 1.3135323450509193,
+            "lighting_multiplier": 1.0275614399830584,
+            "occupancy_density_multiplier": 1.0974578476699501,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.3131471772026997
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 6,
+          "value": 19.692210874359624,
+          "params": {
+            "heating_setpoint_offset": 1.8657797923361743,
+            "cooling_setpoint_offset": 2.1536789941781325,
+            "equipment_multiplier": 1.2360108094790667,
+            "lighting_multiplier": 1.1853777445169902,
+            "occupancy_density_multiplier": 1.5997422368644094,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 1.6472510855001088
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 7,
+          "value": 21.261187161602926,
+          "params": {
+            "heating_setpoint_offset": 1.983359940673889,
+            "cooling_setpoint_offset": 2.5966069835544747,
+            "equipment_multiplier": 1.0154920773180445,
+            "lighting_multiplier": 1.4477381645489102,
+            "occupancy_density_multiplier": 0.9162628140526237,
+            "hvac_availability_shift": -2,
+            "infiltration_multiplier": 1.0020566996804305
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 8,
+          "value": 19.965766612641666,
+          "params": {
+            "heating_setpoint_offset": 2.4767686069418957,
+            "cooling_setpoint_offset": 2.7969643663156063,
+            "equipment_multiplier": 1.1649215919615292,
+            "lighting_multiplier": 1.3341915019493116,
+            "occupancy_density_multiplier": 1.3012116789008585,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.7390286475640253
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 9,
+          "value": 18.841917117950103,
+          "params": {
+            "heating_setpoint_offset": 1.4793541873841831,
+            "cooling_setpoint_offset": 2.5543784446880933,
+            "equipment_multiplier": 1.4210543014968775,
+            "lighting_multiplier": 0.9808112440301913,
+            "occupancy_density_multiplier": 1.2605700023994828,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 1.2763042608199089
+          },
+          "state": "COMPLETE"
+        }
+      ]
+    },
+    {
+      "round_num": 2,
+      "study_name": "KETI_jb_phase1_1_20260510_1833__round_2",
+      "round_dir": "/mnt/c/Users/ryudo/optuna_trials/KETI_jb_phase1_1_20260510_1833/round_2",
+      "active_vars": [
+        "equipment_multiplier",
+        "lighting_multiplier",
+        "occupancy_density_multiplier",
+        "hvac_availability_shift",
+        "heating_setpoint_offset",
+        "cooling_setpoint_offset",
+        "infiltration_multiplier"
+      ],
+      "frozen_vars": {},
+      "alpha_per_var": {
+        "equipment_multiplier": 0.24499999999999997,
+        "lighting_multiplier": 0.24499999999999997,
+        "occupancy_density_multiplier": 0.294,
+        "hvac_availability_shift": 0.9799999999999999,
+        "heating_setpoint_offset": 1.2249999999999999,
+        "cooling_setpoint_offset": 1.2249999999999999,
+        "infiltration_multiplier": 0.36749999999999994
+      },
+      "search_space": {
+        "equipment_multiplier": {
+          "low": 1.0710543014968774,
+          "high": 1.7
+        },
+        "lighting_multiplier": {
+          "low": 0.6308112440301913,
+          "high": 1.3308112440301914
+        },
+        "occupancy_density_multiplier": {
+          "low": 0.8405700023994829,
+          "high": 1.6805700023994827
+        },
+        "hvac_availability_shift": {
+          "low": 0.6000000000000001,
+          "high": 2.0
+        },
+        "heating_setpoint_offset": {
+          "low": -0.2706458126158169,
+          "high": 3.0
+        },
+        "cooling_setpoint_offset": {
+          "low": 0.8043784446880933,
+          "high": 3.0
+        },
+        "infiltration_multiplier": {
+          "low": 0.751304260819909,
+          "high": 1.8013042608199088
+        }
+      },
+      "n_trial": 10,
+      "best_J": 18.70975529275343,
+      "best_params": {
+        "heating_setpoint_offset": 2.319130697756356,
+        "cooling_setpoint_offset": 2.5124162149228955,
+        "equipment_multiplier": 1.4076298125488629,
+        "lighting_multiplier": 1.0536288172779624,
+        "occupancy_density_multiplier": 1.1925548198737692,
+        "hvac_availability_shift": 1,
+        "infiltration_multiplier": 0.8429454647228579
+      },
+      "full_best": {
+        "equipment_multiplier": 1.4076298125488629,
+        "lighting_multiplier": 1.0536288172779624,
+        "occupancy_density_multiplier": 1.1925548198737692,
+        "occupancy_schedule_multiplier": 1.0,
+        "lighting_schedule_multiplier": 1.0,
+        "equipment_schedule_multiplier": 1.0,
+        "hvac_availability_shift": 1,
+        "heating_setpoint_offset": 2.319130697756356,
+        "cooling_setpoint_offset": 2.5124162149228955,
+        "setback_delta_offset": 0.0,
+        "infiltration_multiplier": 0.8429454647228579,
+        "wall_u_multiplier": 1.0,
+        "roof_u_multiplier": 1.0,
+        "window_u_multiplier": 1.0,
+        "window_shgc_multiplier": 1.0,
+        "floor_u_multiplier": 1.0,
+        "oa_flow_multiplier": 1.0,
+        "fan_power_multiplier": 1.0,
+        "boiler_efficiency_multiplier": 1.0,
+        "chiller_cop_multiplier": 1.0,
+        "dhw_use_multiplier": 1.0,
+        "thermal_mass_multiplier": 1.0
+      },
+      "improved": true,
+      "stable_count": {
+        "equipment_multiplier": 1,
+        "lighting_multiplier": 0,
+        "occupancy_density_multiplier": 0,
+        "hvac_availability_shift": 0,
+        "heating_setpoint_offset": 0,
+        "cooling_setpoint_offset": 1,
+        "infiltration_multiplier": 0
+      },
+      "stagnant_count": 1,
+      "duration_sec": 3124.9362161159515,
+      "trial_records": [
+        {
+          "number": 0,
+          "value": 18.841917117950103,
+          "params": {
+            "heating_setpoint_offset": 1.4793541873841831,
+            "cooling_setpoint_offset": 2.5543784446880933,
+            "equipment_multiplier": 1.4210543014968775,
+            "lighting_multiplier": 0.9808112440301913,
+            "occupancy_density_multiplier": 1.2605700023994828,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 1.2763042608199089
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 1,
+          "value": 18.70975529275343,
+          "params": {
+            "heating_setpoint_offset": 2.319130697756356,
+            "cooling_setpoint_offset": 2.5124162149228955,
+            "equipment_multiplier": 1.4076298125488629,
+            "lighting_multiplier": 1.0536288172779624,
+            "occupancy_density_multiplier": 1.1925548198737692,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.8429454647228579
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 2,
+          "value": 20.013509786305868,
+          "params": {
+            "heating_setpoint_offset": 1.9706589495998603,
+            "cooling_setpoint_offset": 2.7810472378573197,
+            "equipment_multiplier": 1.4595551163779035,
+            "lighting_multiplier": 1.322867260058604,
+            "occupancy_density_multiplier": 1.1049474839566362,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.768254388397585
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 3,
+          "value": 21.040893394692304,
+          "params": {
+            "heating_setpoint_offset": 0.0847248752701732,
+            "cooling_setpoint_offset": 2.752290157560381,
+            "equipment_multiplier": 1.1341152578424234,
+            "lighting_multiplier": 1.2362085668647005,
+            "occupancy_density_multiplier": 1.1311872304169135,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.401498033611198
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 4,
+          "value": 22.894843061531173,
+          "params": {
+            "heating_setpoint_offset": 0.24571208285948842,
+            "cooling_setpoint_offset": 0.9425769448249122,
+            "equipment_multiplier": 1.6230790410990426,
+            "lighting_multiplier": 0.9045795931650793,
+            "occupancy_density_multiplier": 1.3570387027624753,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.7708714520480501
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 5,
+          "value": 20.17125155449078,
+          "params": {
+            "heating_setpoint_offset": 2.0500281103064637,
+            "cooling_setpoint_offset": 2.652719978506737,
+            "equipment_multiplier": 1.2387642466540087,
+            "lighting_multiplier": 0.8992119235255585,
+            "occupancy_density_multiplier": 0.9656494260016826,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 1.1459775091777802
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 6,
+          "value": 23.08011604649257,
+          "params": {
+            "heating_setpoint_offset": 2.629802008632435,
+            "cooling_setpoint_offset": 2.869792987724241,
+            "equipment_multiplier": 1.6131497845665803,
+            "lighting_multiplier": 1.1450692709897452,
+            "occupancy_density_multiplier": 1.140565425451245,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 0.9860796720943066
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 7,
+          "value": 25.342869912941005,
+          "params": {
+            "heating_setpoint_offset": 2.102224322624253,
+            "cooling_setpoint_offset": 2.489916420632872,
+            "equipment_multiplier": 1.6841452352298676,
+            "lighting_multiplier": 1.2734468093873004,
+            "occupancy_density_multiplier": 1.6576027038399193,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.5152834208311534
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 8,
+          "value": 20.041619645116853,
+          "params": {
+            "heating_setpoint_offset": 2.7628470278534554,
+            "cooling_setpoint_offset": 2.992471350697181,
+            "equipment_multiplier": 1.5181640669239171,
+            "lighting_multiplier": 0.8808505715526049,
+            "occupancy_density_multiplier": 1.3182578536313163,
+            "hvac_availability_shift": 2,
+            "infiltration_multiplier": 1.414265095622171
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 9,
+          "value": 19.689273215117495,
+          "params": {
+            "heating_setpoint_offset": -0.13450165407501086,
+            "cooling_setpoint_offset": 0.9620350897318336,
+            "equipment_multiplier": 1.2696195198821207,
+            "lighting_multiplier": 1.268116913935701,
+            "occupancy_density_multiplier": 1.237236688445072,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 1.2046802048830956
+          },
+          "state": "COMPLETE"
+        }
+      ]
+    },
+    {
+      "round_num": 3,
+      "study_name": "KETI_jb_phase1_1_20260510_1833__round_3",
+      "round_dir": "/mnt/c/Users/ryudo/optuna_trials/KETI_jb_phase1_1_20260510_1833/round_3",
+      "active_vars": [
+        "equipment_multiplier",
+        "lighting_multiplier",
+        "occupancy_density_multiplier",
+        "hvac_availability_shift",
+        "heating_setpoint_offset",
+        "cooling_setpoint_offset",
+        "infiltration_multiplier"
+      ],
+      "frozen_vars": {
+        "equipment_multiplier": 1.4134842424805476
+      },
+      "alpha_per_var": {
+        "equipment_multiplier": 0.24499999999999997,
+        "lighting_multiplier": 0.17149999999999996,
+        "occupancy_density_multiplier": 0.20579999999999998,
+        "hvac_availability_shift": 0.6859999999999998,
+        "heating_setpoint_offset": 0.8574999999999998,
+        "cooling_setpoint_offset": 0.8574999999999998,
+        "infiltration_multiplier": 0.2572499999999999
+      },
+      "search_space": {
+        "equipment_multiplier": {
+          "low": 1.162629812548863,
+          "high": 1.6526298125488628
+        },
+        "lighting_multiplier": {
+          "low": 0.8086288172779624,
+          "high": 1.2986288172779623
+        },
+        "occupancy_density_multiplier": {
+          "low": 0.8985548198737692,
+          "high": 1.4865548198737693
+        },
+        "hvac_availability_shift": {
+          "low": 0.02000000000000013,
+          "high": 1.98
+        },
+        "heating_setpoint_offset": {
+          "low": 1.0941306977563563,
+          "high": 3.0
+        },
+        "cooling_setpoint_offset": {
+          "low": 1.2874162149228956,
+          "high": 3.0
+        },
+        "infiltration_multiplier": {
+          "low": 0.5,
+          "high": 1.210445464722858
+        }
+      },
+      "n_trial": 10,
+      "best_J": 18.402649546202305,
+      "best_params": {
+        "heating_setpoint_offset": 2.8114199658922105,
+        "cooling_setpoint_offset": 2.8554398206174416,
+        "equipment_multiplier": 1.4134842424805476,
+        "lighting_multiplier": 1.115416611291547,
+        "occupancy_density_multiplier": 1.090773399895913,
+        "hvac_availability_shift": 0,
+        "infiltration_multiplier": 1.1992237387880564
+      },
+      "full_best": {
+        "equipment_multiplier": 1.4134842424805476,
+        "lighting_multiplier": 1.115416611291547,
+        "occupancy_density_multiplier": 1.090773399895913,
+        "occupancy_schedule_multiplier": 1.0,
+        "lighting_schedule_multiplier": 1.0,
+        "equipment_schedule_multiplier": 1.0,
+        "hvac_availability_shift": 0,
+        "heating_setpoint_offset": 2.8114199658922105,
+        "cooling_setpoint_offset": 2.8554398206174416,
+        "setback_delta_offset": 0.0,
+        "infiltration_multiplier": 1.1992237387880564,
+        "wall_u_multiplier": 1.0,
+        "roof_u_multiplier": 1.0,
+        "window_u_multiplier": 1.0,
+        "window_shgc_multiplier": 1.0,
+        "floor_u_multiplier": 1.0,
+        "oa_flow_multiplier": 1.0,
+        "fan_power_multiplier": 1.0,
+        "boiler_efficiency_multiplier": 1.0,
+        "chiller_cop_multiplier": 1.0,
+        "dhw_use_multiplier": 1.0,
+        "thermal_mass_multiplier": 1.0
+      },
+      "improved": true,
+      "stable_count": {
+        "equipment_multiplier": 2,
+        "lighting_multiplier": 0,
+        "occupancy_density_multiplier": 0,
+        "hvac_availability_shift": 0,
+        "heating_setpoint_offset": 0,
+        "cooling_setpoint_offset": 0,
+        "infiltration_multiplier": 0
+      },
+      "stagnant_count": 0,
+      "duration_sec": 2965.4366981983185,
+      "trial_records": [
+        {
+          "number": 0,
+          "value": 18.70975529275343,
+          "params": {
+            "heating_setpoint_offset": 2.319130697756356,
+            "cooling_setpoint_offset": 2.5124162149228955,
+            "equipment_multiplier": 1.4076298125488629,
+            "lighting_multiplier": 1.0536288172779624,
+            "occupancy_density_multiplier": 1.1925548198737692,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.8429454647228579
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 1,
+          "value": 23.23552849703772,
+          "params": {
+            "heating_setpoint_offset": 1.194812232617467,
+            "cooling_setpoint_offset": 2.5101385190406127,
+            "equipment_multiplier": 1.5993830917247518,
+            "lighting_multiplier": 1.2935196329518057,
+            "occupancy_density_multiplier": 1.033362789259792,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.7493109193511347
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 2,
+          "value": 18.93417698131347,
+          "params": {
+            "heating_setpoint_offset": 1.5027717653896866,
+            "cooling_setpoint_offset": 2.44081729489983,
+            "equipment_multiplier": 1.3999828443143134,
+            "lighting_multiplier": 1.045608106883274,
+            "occupancy_density_multiplier": 1.3739413520392374,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.9901688172141323
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 3,
+          "value": 20.25284588627317,
+          "params": {
+            "heating_setpoint_offset": 1.2134133911943425,
+            "cooling_setpoint_offset": 2.2826039400342575,
+            "equipment_multiplier": 1.2250281835127639,
+            "lighting_multiplier": 1.0648538568688348,
+            "occupancy_density_multiplier": 0.9403408332071015,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.145530986231854
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 4,
+          "value": 19.741967762795362,
+          "params": {
+            "heating_setpoint_offset": 1.9633192259614707,
+            "cooling_setpoint_offset": 2.978022126884408,
+            "equipment_multiplier": 1.2774399308081,
+            "lighting_multiplier": 1.1156652017959958,
+            "occupancy_density_multiplier": 1.418802345919798,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.8090497939176302
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 5,
+          "value": 20.401402777930876,
+          "params": {
+            "heating_setpoint_offset": 1.686649188571946,
+            "cooling_setpoint_offset": 2.2961079976940453,
+            "equipment_multiplier": 1.1947774280358705,
+            "lighting_multiplier": 1.0990902816334056,
+            "occupancy_density_multiplier": 1.0882177749156232,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.8401895219922876
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 6,
+          "value": 19.975767345037234,
+          "params": {
+            "heating_setpoint_offset": 1.1194191759785546,
+            "cooling_setpoint_offset": 2.2871737015374443,
+            "equipment_multiplier": 1.258010164129146,
+            "lighting_multiplier": 1.1135720508690161,
+            "occupancy_density_multiplier": 1.3791653310635745,
+            "hvac_availability_shift": 1,
+            "infiltration_multiplier": 0.5849544714100665
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 7,
+          "value": 18.402649546202305,
+          "params": {
+            "heating_setpoint_offset": 2.8114199658922105,
+            "cooling_setpoint_offset": 2.8554398206174416,
+            "equipment_multiplier": 1.4134842424805476,
+            "lighting_multiplier": 1.115416611291547,
+            "occupancy_density_multiplier": 1.090773399895913,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.1992237387880564
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 8,
+          "value": 19.181986213495087,
+          "params": {
+            "heating_setpoint_offset": 2.1895786759255786,
+            "cooling_setpoint_offset": 2.394805299509823,
+            "equipment_multiplier": 1.3778203572967143,
+            "lighting_multiplier": 0.8413791337569845,
+            "occupancy_density_multiplier": 1.3732757576959675,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 0.5163140325608204
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 9,
+          "value": 19.607181505360323,
+          "params": {
+            "heating_setpoint_offset": 2.6129872288805673,
+            "cooling_setpoint_offset": 2.936461793583037,
+            "equipment_multiplier": 1.2737157601436468,
+            "lighting_multiplier": 1.048115278640483,
+            "occupancy_density_multiplier": 1.2450732783319978,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 0.8291430759461236
+          },
+          "state": "COMPLETE"
+        }
+      ]
+    },
+    {
+      "round_num": 4,
+      "study_name": "KETI_jb_phase1_1_20260510_1833__round_4",
+      "round_dir": "/mnt/c/Users/ryudo/optuna_trials/KETI_jb_phase1_1_20260510_1833/round_4",
+      "active_vars": [
+        "lighting_multiplier",
+        "occupancy_density_multiplier",
+        "hvac_availability_shift",
+        "heating_setpoint_offset",
+        "cooling_setpoint_offset",
+        "infiltration_multiplier"
+      ],
+      "frozen_vars": {
+        "equipment_multiplier": 1.4134842424805476
+      },
+      "alpha_per_var": {
+        "lighting_multiplier": 0.12004999999999996,
+        "occupancy_density_multiplier": 0.14405999999999997,
+        "hvac_availability_shift": 0.48019999999999985,
+        "heating_setpoint_offset": 0.6002499999999998,
+        "cooling_setpoint_offset": 0.6002499999999998,
+        "infiltration_multiplier": 0.18007499999999993
+      },
+      "search_space": {
+        "lighting_multiplier": {
+          "low": 0.9439166112915469,
+          "high": 1.2869166112915469
+        },
+        "occupancy_density_multiplier": {
+          "low": 0.8849733998959131,
+          "high": 1.296573399895913
+        },
+        "hvac_availability_shift": {
+          "low": -0.6859999999999998,
+          "high": 0.6859999999999998
+        },
+        "heating_setpoint_offset": {
+          "low": 1.9539199658922106,
+          "high": 3.0
+        },
+        "cooling_setpoint_offset": {
+          "low": 1.9979398206174417,
+          "high": 3.0
+        },
+        "infiltration_multiplier": {
+          "low": 0.9419737387880565,
+          "high": 1.4564737387880564
+        }
+      },
+      "n_trial": 10,
+      "best_J": 18.383706063933186,
+      "best_params": {
+        "heating_setpoint_offset": 2.8889427946796027,
+        "cooling_setpoint_offset": 2.95116244591453,
+        "lighting_multiplier": 1.033739426996338,
+        "occupancy_density_multiplier": 1.1965124691456903,
+        "hvac_availability_shift": 0,
+        "infiltration_multiplier": 1.4501449259141708
+      },
+      "full_best": {
+        "equipment_multiplier": 1.4134842424805476,
+        "lighting_multiplier": 1.033739426996338,
+        "occupancy_density_multiplier": 1.1965124691456903,
+        "occupancy_schedule_multiplier": 1.0,
+        "lighting_schedule_multiplier": 1.0,
+        "equipment_schedule_multiplier": 1.0,
+        "hvac_availability_shift": 0,
+        "heating_setpoint_offset": 2.8889427946796027,
+        "cooling_setpoint_offset": 2.95116244591453,
+        "setback_delta_offset": 0.0,
+        "infiltration_multiplier": 1.4501449259141708,
+        "wall_u_multiplier": 1.0,
+        "roof_u_multiplier": 1.0,
+        "window_u_multiplier": 1.0,
+        "window_shgc_multiplier": 1.0,
+        "floor_u_multiplier": 1.0,
+        "oa_flow_multiplier": 1.0,
+        "fan_power_multiplier": 1.0,
+        "boiler_efficiency_multiplier": 1.0,
+        "chiller_cop_multiplier": 1.0,
+        "dhw_use_multiplier": 1.0,
+        "thermal_mass_multiplier": 1.0
+      },
+      "improved": true,
+      "stable_count": {
+        "equipment_multiplier": 2,
+        "lighting_multiplier": 0,
+        "occupancy_density_multiplier": 0,
+        "hvac_availability_shift": 1,
+        "heating_setpoint_offset": 1,
+        "cooling_setpoint_offset": 1,
+        "infiltration_multiplier": 0
+      },
+      "stagnant_count": 1,
+      "duration_sec": 2850.3858890533447,
+      "trial_records": [
+        {
+          "number": 0,
+          "value": 18.402649546202305,
+          "params": {
+            "heating_setpoint_offset": 2.8114199658922105,
+            "cooling_setpoint_offset": 2.8554398206174416,
+            "lighting_multiplier": 1.115416611291547,
+            "occupancy_density_multiplier": 1.090773399895913,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.1992237387880564
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 1,
+          "value": 18.492129934376777,
+          "params": {
+            "heating_setpoint_offset": 2.564866681720076,
+            "cooling_setpoint_offset": 2.895839333749817,
+            "lighting_multiplier": 1.1415018175424603,
+            "occupancy_density_multiplier": 1.0778598859084725,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.1185342580915079
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 2,
+          "value": 18.530289134040885,
+          "params": {
+            "heating_setpoint_offset": 2.7330354817459908,
+            "cooling_setpoint_offset": 2.9809691268166745,
+            "lighting_multiplier": 0.9799034957844692,
+            "occupancy_density_multiplier": 1.1878751737539295,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.2655035025302386
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 3,
+          "value": 18.383706063933186,
+          "params": {
+            "heating_setpoint_offset": 2.8889427946796027,
+            "cooling_setpoint_offset": 2.95116244591453,
+            "lighting_multiplier": 1.033739426996338,
+            "occupancy_density_multiplier": 1.1965124691456903,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.4501449259141708
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 4,
+          "value": 18.6496872765118,
+          "params": {
+            "heating_setpoint_offset": 2.0206599927690294,
+            "cooling_setpoint_offset": 2.2665959996332083,
+            "lighting_multiplier": 1.0016344689819543,
+            "occupancy_density_multiplier": 1.0364218803945713,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.3481794104423677
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 5,
+          "value": 18.73771290746457,
+          "params": {
+            "heating_setpoint_offset": 2.0677600757528376,
+            "cooling_setpoint_offset": 2.628800535677726,
+            "lighting_multiplier": 0.949112370299141,
+            "occupancy_density_multiplier": 1.2955979912688451,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.2897473605212226
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 6,
+          "value": 18.61918567298468,
+          "params": {
+            "heating_setpoint_offset": 1.9643406793281066,
+            "cooling_setpoint_offset": 2.3141079957212893,
+            "lighting_multiplier": 1.0522913216922498,
+            "occupancy_density_multiplier": 1.1264584665547708,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.418653636606246
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 7,
+          "value": 18.479653624619793,
+          "params": {
+            "heating_setpoint_offset": 2.452900543447022,
+            "cooling_setpoint_offset": 2.9547388461480484,
+            "lighting_multiplier": 1.1480254260961753,
+            "occupancy_density_multiplier": 1.0810317963467102,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.3528937237785905
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 8,
+          "value": 18.68122030616658,
+          "params": {
+            "heating_setpoint_offset": 2.1585881679791,
+            "cooling_setpoint_offset": 2.3526309310168623,
+            "lighting_multiplier": 1.2113790450118946,
+            "occupancy_density_multiplier": 1.1413803851488185,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.3440672057440568
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 9,
+          "value": 18.628268582211064,
+          "params": {
+            "heating_setpoint_offset": 2.5324529161066534,
+            "cooling_setpoint_offset": 2.895469090936248,
+            "lighting_multiplier": 1.2090844260008624,
+            "occupancy_density_multiplier": 0.9956550333891987,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 0.9505049019346887
+          },
+          "state": "COMPLETE"
+        }
+      ]
+    },
+    {
+      "round_num": 5,
+      "study_name": "KETI_jb_phase1_1_20260510_1833__round_5",
+      "round_dir": "/mnt/c/Users/ryudo/optuna_trials/KETI_jb_phase1_1_20260510_1833/round_5",
+      "active_vars": [
+        "lighting_multiplier",
+        "occupancy_density_multiplier",
+        "hvac_availability_shift",
+        "heating_setpoint_offset",
+        "cooling_setpoint_offset",
+        "infiltration_multiplier"
+      ],
+      "frozen_vars": {
+        "equipment_multiplier": 1.4134842424805476,
+        "hvac_availability_shift": 0,
+        "cooling_setpoint_offset": 2.9985757330029386
+      },
+      "alpha_per_var": {
+        "lighting_multiplier": 0.08403499999999997,
+        "occupancy_density_multiplier": 0.10084199999999997,
+        "hvac_availability_shift": 0.48019999999999985,
+        "heating_setpoint_offset": 0.42017499999999985,
+        "cooling_setpoint_offset": 0.6002499999999998,
+        "infiltration_multiplier": 0.12605249999999996
+      },
+      "search_space": {
+        "lighting_multiplier": {
+          "low": 0.913689426996338,
+          "high": 1.153789426996338
+        },
+        "occupancy_density_multiplier": {
+          "low": 1.0524524691456905,
+          "high": 1.3405724691456902
+        },
+        "hvac_availability_shift": {
+          "low": -0.48019999999999985,
+          "high": 0.48019999999999985
+        },
+        "heating_setpoint_offset": {
+          "low": 2.2886927946796027,
+          "high": 3.0
+        },
+        "cooling_setpoint_offset": {
+          "low": 2.35091244591453,
+          "high": 3.0
+        },
+        "infiltration_multiplier": {
+          "low": 1.2700699259141708,
+          "high": 1.6302199259141708
+        }
+      },
+      "n_trial": 10,
+      "best_J": 18.28260671325368,
+      "best_params": {
+        "heating_setpoint_offset": 2.9934843190426483,
+        "cooling_setpoint_offset": 2.9985757330029386,
+        "lighting_multiplier": 1.0947228839342196,
+        "occupancy_density_multiplier": 1.247016227947725,
+        "hvac_availability_shift": 0,
+        "infiltration_multiplier": 1.5527989208575699
+      },
+      "full_best": {
+        "equipment_multiplier": 1.4134842424805476,
+        "lighting_multiplier": 1.0947228839342196,
+        "occupancy_density_multiplier": 1.247016227947725,
+        "occupancy_schedule_multiplier": 1.0,
+        "lighting_schedule_multiplier": 1.0,
+        "equipment_schedule_multiplier": 1.0,
+        "hvac_availability_shift": 0,
+        "heating_setpoint_offset": 2.9934843190426483,
+        "cooling_setpoint_offset": 2.9985757330029386,
+        "setback_delta_offset": 0.0,
+        "infiltration_multiplier": 1.5527989208575699,
+        "wall_u_multiplier": 1.0,
+        "roof_u_multiplier": 1.0,
+        "window_u_multiplier": 1.0,
+        "window_shgc_multiplier": 1.0,
+        "floor_u_multiplier": 1.0,
+        "oa_flow_multiplier": 1.0,
+        "fan_power_multiplier": 1.0,
+        "boiler_efficiency_multiplier": 1.0,
+        "chiller_cop_multiplier": 1.0,
+        "dhw_use_multiplier": 1.0,
+        "thermal_mass_multiplier": 1.0
+      },
+      "improved": true,
+      "stable_count": {
+        "equipment_multiplier": 2,
+        "lighting_multiplier": 0,
+        "occupancy_density_multiplier": 1,
+        "hvac_availability_shift": 2,
+        "heating_setpoint_offset": 0,
+        "cooling_setpoint_offset": 2,
+        "infiltration_multiplier": 0
+      },
+      "stagnant_count": 2,
+      "duration_sec": 2858.455476999283,
+      "trial_records": [
+        {
+          "number": 0,
+          "value": 18.383706063933186,
+          "params": {
+            "heating_setpoint_offset": 2.8889427946796027,
+            "cooling_setpoint_offset": 2.95116244591453,
+            "lighting_multiplier": 1.033739426996338,
+            "occupancy_density_multiplier": 1.1965124691456903,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.4501449259141708
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 1,
+          "value": 18.456651249022688,
+          "params": {
+            "heating_setpoint_offset": 2.4269632766739995,
+            "cooling_setpoint_offset": 2.8347975590861556,
+            "lighting_multiplier": 1.1313844508987716,
+            "occupancy_density_multiplier": 1.231613896949473,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.5120940901677398
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 2,
+          "value": 18.484239095007517,
+          "params": {
+            "heating_setpoint_offset": 2.588520601230895,
+            "cooling_setpoint_offset": 2.9906691943564225,
+            "lighting_multiplier": 1.064002078918502,
+            "occupancy_density_multiplier": 1.062962276672158,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.4112276610470325
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 3,
+          "value": 18.521351204570628,
+          "params": {
+            "heating_setpoint_offset": 2.37327514999935,
+            "cooling_setpoint_offset": 2.459949621554154,
+            "lighting_multiplier": 0.9851885533136235,
+            "occupancy_density_multiplier": 1.1727922446340768,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.5941161971440443
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 4,
+          "value": 18.505960459411497,
+          "params": {
+            "heating_setpoint_offset": 2.5016103232225797,
+            "cooling_setpoint_offset": 2.7619795905531994,
+            "lighting_multiplier": 1.080056981832347,
+            "occupancy_density_multiplier": 1.062744030859404,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.2785595579287814
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 5,
+          "value": 18.43058630296751,
+          "params": {
+            "heating_setpoint_offset": 2.9785550010273987,
+            "cooling_setpoint_offset": 2.991349036991417,
+            "lighting_multiplier": 0.924013063778678,
+            "occupancy_density_multiplier": 1.2948503610432227,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.460722085688645
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 6,
+          "value": 18.522060633067678,
+          "params": {
+            "heating_setpoint_offset": 2.799156430482486,
+            "cooling_setpoint_offset": 2.9420100136709353,
+            "lighting_multiplier": 0.9221745300980416,
+            "occupancy_density_multiplier": 1.2085386914666296,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.3651069559979534
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 7,
+          "value": 18.43479613593015,
+          "params": {
+            "heating_setpoint_offset": 2.9293942699345203,
+            "cooling_setpoint_offset": 2.9579924306398433,
+            "lighting_multiplier": 0.9817240518060455,
+            "occupancy_density_multiplier": 1.2247040911846352,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.3338937188610882
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 8,
+          "value": 18.28260671325368,
+          "params": {
+            "heating_setpoint_offset": 2.9934843190426483,
+            "cooling_setpoint_offset": 2.9985757330029386,
+            "lighting_multiplier": 1.0947228839342196,
+            "occupancy_density_multiplier": 1.247016227947725,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.5527989208575699
+          },
+          "state": "COMPLETE"
+        },
+        {
+          "number": 9,
+          "value": 18.386601028918708,
+          "params": {
+            "heating_setpoint_offset": 2.9670778657119494,
+            "cooling_setpoint_offset": 2.9738507662510503,
+            "lighting_multiplier": 0.9653333570629773,
+            "occupancy_density_multiplier": 1.2072366503045084,
+            "hvac_availability_shift": 0,
+            "infiltration_multiplier": 1.5152420611688604
+          },
+          "state": "COMPLETE"
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "baseline_osm": "/mnt/c/Users/ryudo/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/osm/baseline_osm.osm",
+    "baseline_params": "/mnt/e/AiCE2/2026/01_BIM-UBEM-LLM/2-stage_osm_calibration/materials/building_params/KETI_jb_params.json",
+    "epw": "/mnt/c/Users/ryudo/OneDrive - gachon.ac.kr/2-stage_osm_calibration-osm/KOR_CB_Jeonju.471460_TMYx.2011-2025.epw",
+    "measured_elec": "/mnt/e/AiCE2/2026/01_BIM-UBEM-LLM/2-stage_osm_calibration/materials/measured/electricity_monthly.csv",
+    "measured_gas": "/mnt/e/AiCE2/2026/01_BIM-UBEM-LLM/2-stage_osm_calibration/materials/measured/LNG_monthly.csv"
+  },
+  "outputs": {
+    "run_root": "/mnt/c/Users/ryudo/optuna_trials/KETI_jb_phase1_1_20260510_1833",
+    "study_db": "/mnt/e/AiCE2/2026/01_BIM-UBEM-LLM/2-stage_osm_calibration/materials/optuna/studies/KETI_jb_phase1_1_20260510_1833.db",
+    "summary_json": "/mnt/e/AiCE2/2026/01_BIM-UBEM-LLM/2-stage_osm_calibration/materials/optuna/summaries/KETI_jb_phase1_1_20260510_1833_summary.json"
+  }
+}
